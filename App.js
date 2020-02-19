@@ -18,7 +18,27 @@ import ScannerScreen from './screens/ScannerScreen';
 import AtEvent from './screens/AtEvent';
 import MapScreen from './screens/MapScreen';
 import Profile from './screens/Profile';
+import * as firebase from 'firebase';
 
+import firestore from '@firebase/firestore';
+
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
+    authDomain: "reactnative-f82c6.firebaseapp.com",
+    databaseURL: "https://reactnative-f82c6.firebaseio.com",
+    projectId: "reactnative-f82c6",
+    storageBucket: "reactnative-f82c6.appspot.com",
+    messagingSenderId: "382800399674",
+    appId: "1:382800399674:web:d83dc73f6fef1498851403",
+    measurementId: "G-W29WJ4DWPY"
+  };
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } 
+  
+  const db = firebase.firestore();
 BackHandler.addEventListener('hardwareBackPress', function() {
   return true;
 });
