@@ -6,12 +6,65 @@ import { useTheme } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {withNavigation} from 'react-navigation';
+import * as firebase from 'firebase';
+import firestore from '@firebase/firestore';
 
 
+var firebaseConfig = {
+    apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
+    authDomain: "reactnative-f82c6.firebaseapp.com",
+    databaseURL: "https://reactnative-f82c6.firebaseio.com",
+    projectId: "reactnative-f82c6",
+    storageBucket: "reactnative-f82c6.appspot.com",
+    messagingSenderId: "382800399674",
+    appId: "1:382800399674:web:d83dc73f6fef1498851403",
+    measurementId: "G-W29WJ4DWPY"
+  };
+  
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  } 
+  
+  const db = firebase.firestore();
 export  class RegisterScreen extends React.Component
 {
- 
+    constructor(props){
+        super(props)
+    
+        this.state = ({
+          email:'',
+          password:'',
+          confirm:'',
+
+        })
+      }
+
+      
+    
+      signUpUser = (email,password,confirm) =>{
+          try{
+            if (password.length < 6)
+            {
+              alert("Please enter more than 6 chars")
+            }
+            else if(password != confirm)
+            {
+                alert("Passwords dont match")
+            }
+            else{
+                firebase.auth().createUserWithEmailAndPassword(email,password);
+                this.props.navigation.navigate('Home');
+                
+            }
+            
+          }
+          catch(error){
+            console.log(error.toString())
+          }
+      }
+    
 render(){
+    
     return (
         <View style={{ flex: 1 }}> 
             <View style={{flex:1,position:'absolute',width:'100%',height:'100%'}}>
@@ -32,15 +85,18 @@ render(){
                       leftIcon={<MaterialCommunityIcons name="email" color='grey' size={25}/>}
                       inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                       inputStyle={{marginLeft:15}}
+                      onChangeText={(email) => this.setState({email})}/>
                       
-                  />
+                  
                   <Input
                     placeholder='Password'
                     containerStyle={{width:'85%',marginVertical:10}}
                     leftIcon={<MaterialCommunityIcons name="lock" color='grey' size={25}/>}
                     inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                     inputStyle={{marginLeft:15}}
-                />
+                    onChangeText={(password) => this.setState({password})}/>
+
+                
             
                     <Input
                         placeholder='Confirm Password'
@@ -48,7 +104,7 @@ render(){
                         leftIcon={<MaterialCommunityIcons name="lock" color='grey' size={25}/>}
                         inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                         inputStyle={{marginLeft:15}}
-                    />
+                        onChangeText={(confirm) => this.setState({confirm})}/>
               
                   
                 </KeyboardAvoidingView>
@@ -57,7 +113,8 @@ render(){
                       containerStyle={{width:'80%',marginBottom:30}}
                       buttonStyle={{backgroundColor:'#EC6338', borderRadius:15,height:60,elevation:5}}
                       title="Create Account"
-                      onPress={() => this.props.navigation.navigate('Home')}
+                      onPress={()=>this.signUpUser(this.state.email,this.state.password,this.state.confirm)}
+
                   />
 
                 </View>
