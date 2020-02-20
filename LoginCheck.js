@@ -8,8 +8,31 @@ import firestore from '@firebase/firestore';
 
 export class LoginCheck extends React.Component {
     state = { loggedIn: null,
-            loading:true        
+            loading:true,
+            newUser:false,
     };
+
+    newUserCheck(){
+
+      const db = firebase.firestore();
+
+      db.collection('user').doc(firebase.auth().currentUser.uid).get()
+      .then((doc)=>{
+        if (doc.data().rock > -1)
+        { 
+            this.setState({newUser: false})
+        }
+        else{
+          this.setState({newUser: true})
+        }
+      })
+      .catch(err => {
+        console.log('Error getting documents', err);
+      });
+    }
+    
+
+
     componentDidMount() {
     var firebaseConfig = {
         apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
@@ -26,12 +49,15 @@ export class LoginCheck extends React.Component {
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
       } 
-      
-      
       const db = firebase.firestore();
+
+      
+   
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           this.setState({ loggedIn: true })
+          this.newUserCheck();
+          this.setState({ loading: false });
         } else {
           this.setState({ loggedIn: false })
         }
@@ -42,11 +68,20 @@ export class LoginCheck extends React.Component {
     }
 
   renderComponent() {
+      
       if(this.state.loading) {
           return( <ActivityIndicator size="large" color="grey" />)
       }
       if (this.state.loggedIn) {
-        this.props.navigation.navigate('Home')
+        
+        if(this.state.newUser)
+        {
+          this.props.navigation.navigate('Preferences')
+        }
+        else{
+          this.props.navigation.navigate('Home')
+        }
+        
       } else {
          this.props.navigation.navigate('Welcome')
         
@@ -54,6 +89,7 @@ export class LoginCheck extends React.Component {
     }
 
     render() {
+      
       return (
         <View style={{flex:1,alignItems:'center', justifyContent:'center'}}>
           {this.renderComponent()}

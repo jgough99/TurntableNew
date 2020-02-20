@@ -34,7 +34,7 @@ export  class RegisterScreen extends React.Component
             }
             else{
                 firebase.auth().createUserWithEmailAndPassword(email,password).then(function (user){
-                     navigation.navigate('Home');
+                     navigation.navigate('Preferences');
                 })
             }
           }

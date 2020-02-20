@@ -22,6 +22,7 @@ import * as firebase from 'firebase';
 
 import firestore from '@firebase/firestore';
 import { LoginCheck } from './LoginCheck';
+import { Preferences } from './screens/Preferences';
 
 
 
@@ -95,6 +96,7 @@ export default function App() {
   initialRouteName={"LoginCheck"}
 
   >
+    <RootStack.Screen name="Preferences" component={Preferences} />
     <RootStack.Screen name="LoginCheck" component={LoginCheck} />
     <RootStack.Screen name="Welcome" component={WelcomeScreen} />
     <RootStack.Screen name="Login" component={LoginScreen} />
