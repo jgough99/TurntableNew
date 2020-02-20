@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {  Text, View, Image } from 'react-native';
+import {  Text, View, Image,ActivityIndicator } from 'react-native';
 import {Header, Card, Button} from 'react-native-elements';
 import { useTheme } from '@react-navigation/native';
 import * as firebase from 'firebase';
@@ -7,7 +7,9 @@ import {withNavigation} from 'react-navigation';
 import firestore from '@firebase/firestore';
 
 export class LoginCheck extends React.Component {
-    state = { loggedIn: null };
+    state = { loggedIn: null,
+            loading:true        
+    };
     componentDidMount() {
     var firebaseConfig = {
         apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
@@ -33,10 +35,16 @@ export class LoginCheck extends React.Component {
         } else {
           this.setState({ loggedIn: false })
         }
+        if (this.state.loading) {
+            this.setState({ loading: false });
+        }
       })
     }
 
   renderComponent() {
+      if(this.state.loading) {
+          return( <ActivityIndicator size="large" color="grey" />)
+      }
       if (this.state.loggedIn) {
         this.props.navigation.navigate('Home')
       } else {
@@ -47,7 +55,7 @@ export class LoginCheck extends React.Component {
 
     render() {
       return (
-        <View>
+        <View style={{flex:1,alignItems:'center', justifyContent:'center'}}>
           {this.renderComponent()}
         </View>
       );
