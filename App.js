@@ -21,24 +21,10 @@ import Profile from './screens/Profile';
 import * as firebase from 'firebase';
 
 import firestore from '@firebase/firestore';
+import { LoginCheck } from './LoginCheck';
 
 
-var firebaseConfig = {
-    apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
-    authDomain: "reactnative-f82c6.firebaseapp.com",
-    databaseURL: "https://reactnative-f82c6.firebaseio.com",
-    projectId: "reactnative-f82c6",
-    storageBucket: "reactnative-f82c6.appspot.com",
-    messagingSenderId: "382800399674",
-    appId: "1:382800399674:web:d83dc73f6fef1498851403",
-    measurementId: "G-W29WJ4DWPY"
-  };
-  
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  } 
-  
-  const db = firebase.firestore();
+
 BackHandler.addEventListener('hardwareBackPress', function() {
   return true;
 });
@@ -104,9 +90,12 @@ export default function App() {
       
     <RootStack.Navigator screenOptions={{
     headerShown: false, gestureEnabled:false, 
+
   }}
+  initialRouteName={"LoginCheck"}
 
   >
+    <RootStack.Screen name="LoginCheck" component={LoginCheck} />
     <RootStack.Screen name="Welcome" component={WelcomeScreen} />
     <RootStack.Screen name="Login" component={LoginScreen} />
     <RootStack.Screen name="Register" component={RegisterScreen} />

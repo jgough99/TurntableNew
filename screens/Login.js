@@ -50,7 +50,7 @@ export class LoginScreen extends React.Component
                       inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                       inputStyle={{marginLeft:15}}
                       onChangeText={(email) => this.setState({email})}
-                      autoCapitalize="none"
+                      autoCapitalize="none" 
                       autoCorrect={false}/>
 
                     <Input

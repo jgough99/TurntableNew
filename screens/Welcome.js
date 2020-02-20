@@ -3,6 +3,8 @@ import {  Text, View, Image } from 'react-native';
 import {Header, Card, Button} from 'react-native-elements';
 import CustomHeader from '../components/Header';
 import { useTheme } from '@react-navigation/native';
+import * as firebase from 'firebase';
+import firestore from '@firebase/firestore';
 
 export default function Welcome({navigation})
 {
