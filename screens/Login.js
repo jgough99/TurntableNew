@@ -5,10 +5,31 @@ import CustomHeader from '../components/Header';
 import { useTheme } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {withNavigation} from 'react-navigation';
-
+import * as firebase from 'firebase';
+import firestore from '@firebase/firestore';
 
 export class LoginScreen extends React.Component
 {
+    constructor(props){
+        super(props)
+    
+        this.state = ({
+          email:'',
+          password:'',
+        })
+      }
+
+      loginUser = (email,password,navigation) =>{
+        try{
+            firebase.auth().signInWithEmailAndPassword(email,password).then(function (user){
+                navigation.navigate('Home');
+          })
+        }
+        catch(error){
+          console.log(error.toString())
+        }
+    }
+
     render()
     {
     return (
@@ -28,17 +49,21 @@ export class LoginScreen extends React.Component
                       leftIcon={<MaterialCommunityIcons name="email" color='grey' size={25}/>}
                       inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                       inputStyle={{marginLeft:15}}
-                  />
-                  
-                  
+                      onChangeText={(email) => this.setState({email})}
+                      autoCapitalize="none"
+                      autoCorrect={false}/>
+
                     <Input
-                      style={{alignSelf:"center"}}
-                    placeholder='Password'
+                        style={{alignSelf:"center"}}
+                        placeholder='Password'
                     containerStyle={{width:'85%',marginVertical:10}}
                     leftIcon={<MaterialCommunityIcons name="lock" color='grey' size={25}/>}
                     inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                     inputStyle={{marginLeft:15}}
-                    
+                    onChangeText={(password) => this.setState({password})}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={true}
                     />
                 
                 </KeyboardAvoidingView>
@@ -47,7 +72,7 @@ export class LoginScreen extends React.Component
                       containerStyle={{width:'80%',marginBottom:30}}
                       buttonStyle={{backgroundColor:'#EC6338', borderRadius:15,height:60,elevation:5}}
                       title="Sign In"
-                      onPress={() => this.props.navigation.navigate('Home')}
+                      onPress={()=>this.loginUser(this.state.email,this.state.password,this.props.navigation)}
                   />
 
                 </View>
@@ -74,8 +99,6 @@ export class LoginScreen extends React.Component
 
     );        
     }
-    
-
 
 }
 export default withNavigation(LoginScreen);

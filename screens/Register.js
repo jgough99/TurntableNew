@@ -22,7 +22,7 @@ export  class RegisterScreen extends React.Component
         })
       }
     
-      signUpUser = (email,password,confirm) =>{
+      signUpUser = (email,password,confirm,navigation) =>{
           try{
             if (password.length < 6)
             {
@@ -33,15 +33,15 @@ export  class RegisterScreen extends React.Component
                 alert("Passwords dont match")
             }
             else{
-                firebase.auth().createUserWithEmailAndPassword(email,password);
-                this.props.navigation.navigate('Home');
-                
+                firebase.auth().createUserWithEmailAndPassword(email,password).then(function (user){
+                     navigation.navigate('Home');
+                })
             }
-            
           }
           catch(error){
             console.log(error.toString())
           }
+         
       }
     
 render(){
@@ -66,6 +66,8 @@ render(){
                       leftIcon={<MaterialCommunityIcons name="email" color='grey' size={25}/>}
                       inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                       inputStyle={{marginLeft:15}}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       onChangeText={(email) => this.setState({email})}/>
                       
                   
@@ -75,16 +77,20 @@ render(){
                     leftIcon={<MaterialCommunityIcons name="lock" color='grey' size={25}/>}
                     inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                     inputStyle={{marginLeft:15}}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    secureTextEntry={true}
                     onChangeText={(password) => this.setState({password})}/>
 
-                
-            
                     <Input
                         placeholder='Confirm Password'
                         containerStyle={{width:'85%',marginVertical:10}}
                         leftIcon={<MaterialCommunityIcons name="lock" color='grey' size={25}/>}
                         inputContainerStyle={{borderColor:'#CDCBCB',borderWidth:1,borderRadius:15,height:60}}
                         inputStyle={{marginLeft:15}}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        secureTextEntry={true}
                         onChangeText={(confirm) => this.setState({confirm})}/>
               
                   
@@ -94,7 +100,7 @@ render(){
                       containerStyle={{width:'80%',marginBottom:30}}
                       buttonStyle={{backgroundColor:'#EC6338', borderRadius:15,height:60,elevation:5}}
                       title="Create Account"
-                      onPress={()=>this.signUpUser(this.state.email,this.state.password,this.state.confirm)}
+                      onPress={()=>this.signUpUser(this.state.email,this.state.password,this.state.confirm,this.props.navigation)}
 
                   />
 
