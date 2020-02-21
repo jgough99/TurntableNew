@@ -11,6 +11,7 @@ admin.initializeApp();
 
 exports.addUserToFirestore= functions.auth.user().onCreate((user) => {
     return admin.firestore().collection("user").doc(user.uid).set({
+        email:user.email,
         rock:-1,
         pop:-1,
         electro:-1,

@@ -13,27 +13,39 @@ export class LoginCheck extends React.Component {
     };
 
     newUserCheck(){
-
+      //SOME SORT OF LOOP WHICH ONLY BREAKS WHEN THE CURRENT USERS DATABASE COPY HAS BEEN MADE
       const db = firebase.firestore();
+      
+          db.collection('user').doc(firebase.auth().currentUser.uid).get()
+        .then((doc)=>{
+          if (doc.data().rock > -1)
+          { 
+            console.log("FIRST " + doc.data().rock)
+              this.setState({newUser: false})
+          }
+          else{
+            console.log("SECOND " + doc.data().rock)
 
-      db.collection('user').doc(firebase.auth().currentUser.uid).get()
-      .then((doc)=>{
-        if (doc.data().rock > -1)
-        { 
-            this.setState({newUser: false})
-        }
-        else{
-          this.setState({newUser: true})
-        }
-      })
-      .catch(err => {
-        console.log('Error getting documents', err);
-      });
+            this.setState({newUser: true})
+          }
+        })
+        .catch(err => {
+
+          this.newUserCheck()
+        });
+      
+      
     }
     
+    ///////////////////////////////////////////////////////////
+    //WHEN YOU GO ONTO THE APP AND ARE ALREADY LOGGED IN AND THEN
+    //YOU SIGN OUT AND REGISTER A NEW ACCOUNT IT DOES NOT CHECK IF YOU
+    //ARE A NEW USER
 
+    //MAY BE BECAUSE IT DOESNT MAKE THE THING FAST ENOUGH IN THE CLOUD
 
     componentDidMount() {
+      
     var firebaseConfig = {
         apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
         authDomain: "reactnative-f82c6.firebaseapp.com",
@@ -49,14 +61,18 @@ export class LoginCheck extends React.Component {
       if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
       } 
-      const db = firebase.firestore();
+      const db = firebase.firestore(); 
 
       
    
       firebase.auth().onAuthStateChanged((user) => {
+
+        this.setState({ loggedIn: false })
         if (user) {
-          this.setState({ loggedIn: true })
+          
           this.newUserCheck();
+          this.setState({ loggedIn: true })
+          
           this.setState({ loading: false });
         } else {
           this.setState({ loggedIn: false })
@@ -78,7 +94,7 @@ export class LoginCheck extends React.Component {
         {
           this.props.navigation.navigate('Preferences')
         }
-        else{
+        if(!this.state.newUser){
           this.props.navigation.navigate('Home')
         }
         
