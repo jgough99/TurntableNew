@@ -55,22 +55,23 @@ export class Profile extends React.Component
       
 
 render(){
-
-
     return (
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>  
             <CustomHeader title="Profile"/>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
-
-            <Text>Rock: {this.state.rock}</Text>
-            <Text>HipHop: {this.state.hipHop}</Text>
-            <Text>Pop: {this.state.pop}</Text>
-            <Text>House: {this.state.house}</Text>
-            <Text>Electro: {this.state.electro}</Text>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start',width:'100%'}}>
+             <Text style={{ width:(((this.state.rock)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>Rock</Text>
+            <Text style={{ width:(((this.state.hipHop)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>HipHop</Text>
+            <Text style={{ width:(((this.state.pop)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>Pop</Text>
+            <Text style={{ width:(((this.state.house)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>House</Text>
+            <Text style={{ width:(((this.state.electro)*100).toString()+"%"), borderTopRightRadius:15,borderBottomRightRadius:15,backgroundColor:'#EC6338',marginVertical:5}}>Electro</Text>
                 <Button
                 title="Sign out"
                 onPress={() => this.signOutMethod()} 
+                />
+
+                <Button
+                  title="Create Event"
+                  onPress={() => this.props.navigation.navigate("CreateEvent")} 
                 />
             </View>
         </View>

@@ -22,11 +22,15 @@ export class LoginCheck extends React.Component {
           { 
             console.log("FIRST " + doc.data().rock)
               this.setState({newUser: false})
+              this.setState({ loggedIn: true })
+              this.setState({ loading: false });
           }
           else{
             console.log("SECOND " + doc.data().rock)
 
             this.setState({newUser: true})
+            this.setState({ loggedIn: true })
+            this.setState({ loading: false });
           }
         })
         .catch(err => {
@@ -66,14 +70,8 @@ export class LoginCheck extends React.Component {
       
    
       firebase.auth().onAuthStateChanged((user) => {
-
-        this.setState({ loggedIn: false })
         if (user) {
-          
           this.newUserCheck();
-          this.setState({ loggedIn: true })
-          
-          this.setState({ loading: false });
         } else {
           this.setState({ loggedIn: false })
         }
@@ -98,7 +96,7 @@ export class LoginCheck extends React.Component {
           this.props.navigation.navigate('Home')
         }
         
-      } else {
+      } else if (this.state.loggedIn == false) {
          this.props.navigation.navigate('Welcome')
         
       }

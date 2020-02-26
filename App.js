@@ -23,6 +23,7 @@ import * as firebase from 'firebase';
 import firestore from '@firebase/firestore';
 import { LoginCheck } from './LoginCheck';
 import { Preferences } from './screens/Preferences';
+import ConfirmEvent from './screens/ConfirmEvent';
 
 
 
@@ -50,6 +51,7 @@ export function BottomNavScreen({navigation}) {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="map" color={color} size={size} />
           ),
+          unmountOnBlur:true
         }} />
           <HomeTabs.Screen name="Scanner" component={ScannerScreen} options={{
           tabBarIcon: ({ color, size }) => (
@@ -105,6 +107,8 @@ export default function App() {
     <RootStack.Screen name= "atEvent" component={AtEvent} />
     <RootStack.Screen name= "MyEvent" component={MyEvent} />
     <RootStack.Screen name="CreateEvent" component={CreateEventScreen} />
+    <RootStack.Screen name="ConfirmEvent" component={ConfirmEvent} />
+
   </RootStack.Navigator>
   </NavigationContainer>
   );
