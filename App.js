@@ -19,7 +19,6 @@ import AtEvent from './screens/AtEvent';
 import MapScreen from './screens/MapScreen';
 import Profile from './screens/Profile';
 import * as firebase from 'firebase';
-
 import firestore from '@firebase/firestore';
 import { LoginCheck } from './LoginCheck';
 import { Preferences } from './screens/Preferences';

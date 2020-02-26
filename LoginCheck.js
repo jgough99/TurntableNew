@@ -5,11 +5,13 @@ import { useTheme } from '@react-navigation/native';
 import * as firebase from 'firebase';
 import {withNavigation} from 'react-navigation';
 import firestore from '@firebase/firestore';
+import * as Font from 'expo-font';
 
 export class LoginCheck extends React.Component {
     state = { loggedIn: null,
             loading:true,
             newUser:false,
+            fontLoaded:false,
     };
 
     newUserCheck(){
@@ -48,7 +50,14 @@ export class LoginCheck extends React.Component {
 
     //MAY BE BECAUSE IT DOESNT MAKE THE THING FAST ENOUGH IN THE CLOUD
 
-    componentDidMount() {
+    async componentDidMount() {
+     
+      await Font.loadAsync({
+        'Rubik-Regular': require('./assets/fonts/Rubik-Regular.ttf'),
+      });
+  
+      this.setState({ fontLoaded: true });
+    
       
     var firebaseConfig = {
         apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
@@ -106,7 +115,12 @@ export class LoginCheck extends React.Component {
       
       return (
         <View style={{flex:1,alignItems:'center', justifyContent:'center'}}>
-          {this.renderComponent()}
+          {
+            this.state.fontLoaded ? (
+                this.renderComponent()
+            ) : null
+          }
+         
         </View>
       );
     }

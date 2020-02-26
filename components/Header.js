@@ -17,7 +17,7 @@ export default class CustomHeader extends Component{
                 fadeDuration={0}
                 style={{width: 35, height: 35}}
             /> }
-            centerComponent={{ text: this.props.title, style: { color: 'black', fontSize:22,fontWeight:'bold' } }}
+            centerComponent={{ text: this.props.title, style: { color: 'black', fontSize:25,fontFamily: 'Rubik-Regular' } }}
         />
         ) 
     }

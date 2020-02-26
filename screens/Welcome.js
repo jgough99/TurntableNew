@@ -26,10 +26,10 @@ export default function Welcome({navigation})
                 />
                 </View>
                 <View style={{ flex: 1,alignItems:'center',justifyContent:'center'  }}> 
-                <Text style={{fontSize:45, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center'}}>Welcome to {"\n"} turntable.</Text>
+                <Text style={{fontSize:50, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center',fontFamily: 'Rubik-Regular'}}>Welcome to {"\n"} turntable.</Text>
                 </View>
                 <View style={{ flex: 1,alignItems:'center',justifyContent:'center' }}> 
-                <Text style={{fontSize:20, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center'}}>The tables have turned. {"\n"} Now you're in control.</Text>
+                <Text style={{fontSize:20, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center',fontFamily: 'Rubik-Regular'}}>The tables have turned. {"\n"} Now you're in control.</Text>
                 </View>
                 <View style={{ flex: 1 , justifyContent: 'center', alignItems: 'center' }}> 
                 <View style={{ flexDirection:'row', justifyContent: 'center', alignItems: 'center' , width:'80%',flex:1}}>
