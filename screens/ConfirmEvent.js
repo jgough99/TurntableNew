@@ -13,8 +13,6 @@ Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
 
 export class CreateEvent extends React.Component {
 
- 
-
     state={
       lat:51.620685,
       lng:-3.943685,
@@ -29,7 +27,8 @@ export class CreateEvent extends React.Component {
             location:new firebase.firestore.GeoPoint(this.state.lat,this.state.lng),
             title:this.state.eventName,
             type:this.state.type === 0 ? "Private":"Public",
-            startTime:firebase.firestore.Timestamp.fromDate(this.state.date) 
+            startTime:firebase.firestore.Timestamp.fromDate(this.state.date),
+            userId : firebase.auth().currentUser.uid
           })  
           navigation.navigate('Home')
     }

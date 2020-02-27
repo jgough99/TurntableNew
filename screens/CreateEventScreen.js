@@ -144,29 +144,6 @@ export class CreateEvent extends React.Component {
          autoCapitalize="none" 
          autoCorrect={false}/>
         
-
-
-        {/* <View style={{flex:1,width:300,maxHeight:300}}>  
-                    <MapView
-                        style={styles.map}
-                        region={{
-                        latitude: this.state.lat, 
-                        longitude: this.state.lng,
-                        latitudeDelta: 0.003,
-                        longitudeDelta: 0.003,
-                        }}
-                        >
-                        <Marker
-                        coordinate={{
-                            latitude: this.state.lat, 
-                            longitude: this.state.lng,
-                        }}
-                        title={"Club Y"}
-                        >
-                        <Image source={require('./assets/turntable_logo.png')} style={{height: 35, width:35 }} />
-                        </Marker>
-                    </MapView>
-            </View> */}
         </View>
       )}
 

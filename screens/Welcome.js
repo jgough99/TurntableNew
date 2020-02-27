@@ -17,7 +17,7 @@ export default function Welcome({navigation})
                 fadeDuration={0}
                 style={{width: '100%', height: '100%'}}
             />
-            <View style={{flex:1,position:'absolute',width:'100%',height:'100%'}}>
+            <View style={{flex:2,position:'absolute',width:'100%',height:'100%'}}>
                 <View style={{ flex: 2,alignItems:'center',justifyContent:'center' }}> 
                 <Image
                     source={require('../assets/turntable_logo.png')}
@@ -25,11 +25,11 @@ export default function Welcome({navigation})
                     style={{width:200,height:200}}
                 />
                 </View>
-                <View style={{ flex: 1,alignItems:'center',justifyContent:'center'  }}> 
-                <Text style={{fontSize:50, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center',fontFamily: 'Rubik-Regular'}}>Welcome to {"\n"} turntable.</Text>
+                <View style={{ flex: 1,alignItems:'center',justifyContent:'flex-end'  }}> 
+                <Text style={{fontSize:50, color:'white',textShadowRadius:20, textAlign:'center',fontFamily: 'Rubik-Regular',marginBottom:10}}>turntable.</Text>
                 </View>
-                <View style={{ flex: 1,alignItems:'center',justifyContent:'center' }}> 
-                <Text style={{fontSize:20, color:'white',textShadowRadius:10,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center',fontFamily: 'Rubik-Regular'}}>The tables have turned. {"\n"} Now you're in control.</Text>
+                <View style={{ flex: 1,alignItems:'center',justifyContent:'flex-start' }}> 
+                <Text style={{fontSize:20, color:'white',textShadowRadius:20,textShadowColor:'rgba(0, 0, 0, 0.5)', textAlign:'center',fontFamily: 'Rubik-Regular'}}>The tables have turned. {"\n"} Now you're in control.</Text>
                 </View>
                 <View style={{ flex: 1 , justifyContent: 'center', alignItems: 'center' }}> 
                 <View style={{ flexDirection:'row', justifyContent: 'center', alignItems: 'center' , width:'80%',flex:1}}>

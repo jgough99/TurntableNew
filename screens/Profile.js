@@ -73,6 +73,11 @@ render(){
                   title="Create Event"
                   onPress={() => this.props.navigation.navigate("CreateEvent")} 
                 />
+
+                <Button
+                  title="Go to my events"
+                  onPress={() => this.props.navigation.navigate("MyEventsList")} 
+                />
             </View>
         </View>
 

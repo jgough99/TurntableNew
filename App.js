@@ -23,6 +23,7 @@ import firestore from '@firebase/firestore';
 import { LoginCheck } from './LoginCheck';
 import { Preferences } from './screens/Preferences';
 import ConfirmEvent from './screens/ConfirmEvent';
+import { MyEventsList } from './screens/MyEventsList';
 
 
 
@@ -56,6 +57,7 @@ export function BottomNavScreen({navigation}) {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="qrcode-scan" color={color} size={size} />
           ),
+          unmountOnBlur:true
         }}/>
           <HomeTabs.Screen name="Profile" component={Profile} options={{
           tabBarIcon: ({ color, size }) => (
@@ -97,6 +99,7 @@ export default function App() {
   initialRouteName={"LoginCheck"}
 
   >
+    <RootStack.Screen name="MyEventsList" component={MyEventsList} />    
     <RootStack.Screen name="Preferences" component={Preferences} />
     <RootStack.Screen name="LoginCheck" component={LoginCheck} />
     <RootStack.Screen name="Welcome" component={WelcomeScreen} />

@@ -15,7 +15,7 @@ export default function AtEvent({ route, navigation })
              <Button
                    
                     title="BACK"
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => navigation.navigate( 'Profile' )}
                 />
             </View>
         </View>
