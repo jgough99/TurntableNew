@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View,Image } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CustomHeader from '../components/Header';
 import * as firebase from 'firebase';
 import firestore from '@firebase/firestore';
 import {withNavigation} from 'react-navigation';
+import QRCode from 'react-native-qrcode-svg';
 
 
 export function GenericHomeScreen({navigation}) {
@@ -18,7 +19,12 @@ export function GenericHomeScreen({navigation}) {
 export function CodeScreen() {
     return (
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-
+            <QRCode
+              value={eventIdGlobal.toString()}
+              size={200}
+              logo={require('../assets/turntable_logo.png')}
+              logoSize={60}
+            />
         </View>
     );
 }
