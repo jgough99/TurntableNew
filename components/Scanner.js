@@ -74,7 +74,7 @@ export default class BarcodeScannerScreen extends React.Component {
 
     this.setState({ scanned: true });
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    this.props.nav.navigate('atEvent',{eventTitle:data})
+    this.props.nav.navigate('atEvent',{eventId:data})
 
   };
 }

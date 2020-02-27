@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View,Image } from 'react-native';
+import { Text, View,Image,Dimensions } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CustomHeader from '../components/Header';
 import * as firebase from 'firebase';
@@ -21,9 +21,9 @@ export function CodeScreen() {
         <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
             <QRCode
               value={eventIdGlobal.toString()}
-              size={200}
+              size={Dimensions.get('window').width * 0.8}
               logo={require('../assets/turntable_logo.png')}
-              logoSize={60}
+              logoSize={Dimensions.get('window').width * 0.25 }
             />
         </View>
     );
@@ -37,11 +37,9 @@ export class MyEvent extends React.Component
     super(props)
     eventIdGlobal = this.props.route.params.eventId.toString()
     this.state = ({
-   
         title:'',
         eventId:this.props.route.params.eventId.toString(),
         loading:true,
-    
     })
   }
   

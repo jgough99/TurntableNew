@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {  Text, View, Image,TouchableOpacity } from 'react-native';
+import {  Text, View, Image,TouchableOpacity, } from 'react-native';
 import {Header, Button,Card} from 'react-native-elements';
 import CustomHeader from '../components/Header';
 import * as firebase from 'firebase';
