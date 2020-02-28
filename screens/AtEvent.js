@@ -22,24 +22,22 @@ export class AtEvent extends React.Component
             this.setState({title:doc.data().title})
             this.setState({loading:false})
 
-            db.collection("attendance").doc(doc.id).set({
-                
+            db.collection("attendance").doc(doc.id.toString() + firebase.auth().currentUser.uid.toString()).set({
                 userId : firebase.auth().currentUser.uid,
+                eventId : doc.id,
                 active:true
               })  
         })
         .catch(err => {
         console.log('Error getting documents', err);
         this.setState({loading:false})
-    
         });  
       }
 
-
       exitEvent(navigation){
         const db = firebase.firestore();
-        db.collection("attendance").doc(this.state.codeValue.toString()).set({
-                
+        db.collection("attendance").doc(this.state.codeValue.toString()+firebase.auth().currentUser.uid).set({
+            eventId: this.state.codeValue,
             userId : firebase.auth().currentUser.uid,
             active:false
           })  

@@ -29,7 +29,6 @@ export class MyEventsList extends React.Component
             }
              
             snapshot.forEach(doc => {
-                console.log(doc.data())
                 this.state.events.push({id: doc.id, title:doc.data().title, startTime:doc.data().startTime})
             
             }
