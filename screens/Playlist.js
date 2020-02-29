@@ -14,7 +14,8 @@ export default class PlaylistScreen extends React.Component {
     state={
       playlist:[],
       loading:true,
-      songsArray:[]
+      songsArray:[],
+      attendees:[]
     }
   
     sortFunction(a, b) {
@@ -26,12 +27,8 @@ export default class PlaylistScreen extends React.Component {
       }
   }
 
-    pushToPlaylist()
-    {
-        
-    }
-  
-    playlistUpdate(){ 
+
+    playlistUpdate(){
       var userPreferences = null;
       this.setState({loading:true})
       const db = firebase.firestore();
@@ -39,20 +36,47 @@ export default class PlaylistScreen extends React.Component {
       .then(snapshot => {
         userPreferences = snapshot.data()
 
-        var arrayLength = this.state.songsArray.length;
-        for (var i = 0; i < arrayLength; i++) {
+        var attendeesArrayLength = this.state.attendees.length;
+        console.log(this.state.attendees)
+        var rock = userPreferences.rock;
+        var hiphop = userPreferences.hipHop;
+        var electro = userPreferences.electro;
+        var house = userPreferences.house;
+        var pop = userPreferences.pop;
+
+
+        this.setState({playlist: []})
+        if (attendeesArrayLength>0)
+        {
+            for (var i = 0; i < attendeesArrayLength; i++){
+                rock = rock + this.state.attendees[i].rock;
+                hiphop = hiphop + this.state.attendees[i].hipHop;
+                electro = electro + this.state.attendees[i].electro;
+                house = house + this.state.attendees[i].house;
+                pop = pop + this.state.attendees[i].pop;
+            }            
+        }
+
+ 
+        var totalNumberOfAttendees = attendeesArrayLength+1;
+
+        rock = rock /totalNumberOfAttendees;
+        hiphop = hiphop/totalNumberOfAttendees;
+        electro = electro/totalNumberOfAttendees;
+        house = house/totalNumberOfAttendees;
+        pop = pop/totalNumberOfAttendees;
+
+        var songsArrayLength = this.state.songsArray.length;
+        for (var i = 0; i < songsArrayLength; i++) {
                var data = this.state.songsArray[i].data;
                this.state.playlist.push([similarity([data.rock,data.hiphop,data.electro,data.house,data.pop],
-               [userPreferences.rock,userPreferences.hipHop,userPreferences.electro,userPreferences.house,userPreferences.pop]),data]) 
+               [rock,hiphop,electro,house,pop]),data]) 
          }
          
          this.state.playlist.sort(this.sortFunction);
          this.setState({loading:false})
       })
 
-
-
-  
       .catch(err => {
           console.log('Error getting documents', err); 
           this.setState({loading:false})
@@ -76,19 +100,27 @@ export default class PlaylistScreen extends React.Component {
              console.log('No matching documents.');
              return;
              } 
-             this.playlistUpdate();
-             console.log('THE PLAYLIST HAS UPDATED')
+             this.setState({attendees:[]})
              querySnapshot.forEach(doc => {
-
+                 if (doc.data().active == true)
+                 {
+                     db.collection('user').doc(doc.data().userId).get()
+                     .then(snapshot => {
+                        this.state.attendees.push(snapshot.data())
+                     });
+                     
+                 }
+                
              }
              );
+             this.playlistUpdate();
+             console.log('THE PLAYLIST HAS UPDATED')
      }, err => {
         console.log(`Encountered error: ${err}`);
       }); 
   
     //Every time the playlist changes
     db.collection('event').doc(this.props.eventId.toString()).onSnapshot(docSnapshot => {
-      //this.setState({playlist: docSnapshot.data().playlist});
   
     }, err => {
       console.log(`Encountered error: ${err}`);
