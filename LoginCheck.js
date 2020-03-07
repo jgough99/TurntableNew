@@ -100,6 +100,7 @@ export class LoginCheck extends React.Component {
      
       await Font.loadAsync({
         'Rubik-Regular': require('./assets/fonts/Rubik-Regular.ttf'),
+        'Rubik-Medium': require('./assets/fonts/Rubik-Medium.ttf'),
       });
   
       this.setState({ fontLoaded: true });

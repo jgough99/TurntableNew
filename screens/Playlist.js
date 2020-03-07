@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Text, View,Image,Dimensions,SafeAreaView, ScrollView,AsyncStorage } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CustomHeader from '../components/Header';
+import PlaylistItem from '../components/PlaylistItem';
+
 import * as firebase from 'firebase';
 import firestore from '@firebase/firestore';
 import {withNavigation} from 'react-navigation';
 import QRCode from 'react-native-qrcode-svg';
 import similarity from 'compute-cosine-similarity'
-
 
 export default class PlaylistScreen extends React.Component {
   
@@ -29,15 +30,16 @@ export default class PlaylistScreen extends React.Component {
 
 
     playlistUpdate(){
+        
       var userPreferences = null;
       this.setState({loading:true})
       const db = firebase.firestore();
       db.collection("user").doc(firebase.auth().currentUser.uid).get()
       .then(snapshot => {
         userPreferences = snapshot.data()
+        console.log(this.state.attendees)
 
         var attendeesArrayLength = this.state.attendees.length;
-        console.log(this.state.attendees)
         var rock = userPreferences.rock;
         var hiphop = userPreferences.hipHop;
         var electro = userPreferences.electro;
@@ -88,7 +90,6 @@ export default class PlaylistScreen extends React.Component {
 
         var value = await AsyncStorage.getItem('songsArray2');
         if (value !== null) {
-            console.log(JSON.parse(value)[0]);
             this.setState({songsArray:JSON.parse(value)})
         }
 
@@ -98,21 +99,20 @@ export default class PlaylistScreen extends React.Component {
       db.collection('attendance').where('eventId','==',this.props.eventId.toString()).onSnapshot(querySnapshot => {
         if (querySnapshot.empty) {
              console.log('No matching documents.');
-             return;
+             
              } 
              this.setState({attendees:[]})
              querySnapshot.forEach(doc => {
-                 if (doc.data().active == true)
+                 if (doc.data().active === true)
                  {
                      db.collection('user').doc(doc.data().userId).get()
                      .then(snapshot => {
                         this.state.attendees.push(snapshot.data())
                      });
-                     
                  }
-                
              }
              );
+
              this.playlistUpdate();
              console.log('THE PLAYLIST HAS UPDATED')
      }, err => {
@@ -130,10 +130,39 @@ export default class PlaylistScreen extends React.Component {
     if (this.state.loading == false)
       {
       return(
-        <SafeAreaView style={{flex:1 }}>
-              <ScrollView>
+        <SafeAreaView style={{flex:1,alignItems:'center',justifyContent:'center' }}>
+          
+          <View style={{flex:1,
+          flexDirection:'row',
+          alignItems: 'center', 
+          justifyContent:'center',
+          minHeight:50,
+          borderBottomWidth:1,
+          borderColor:'#CDCBCB',
+          width:Dimensions.get('window').width*0.90,
+          marginTop:10
+          }}>
+              {/* Index */}
+              <View style={{flex:2,height:'100%',justifyContent:'center',fontFamily: 'Rubik-Regular'}}>
+                <Text style={{color:'#514F4F',fontSize:12,fontFamily: 'Rubik-Regular'}}>POSITION</Text>
+              </View>
+
+              {/* Title/Artist */}
+              <View style={{flex:6,height:'100%', justifyContent:'center'}}>
+                    <Text style={{color:'#514F4F',fontSize:12,fontFamily: 'Rubik-Regular'}}>TITLE/ARTIST</Text>
+              </View>
+
+              {/* Genre */}
+              <View style={{flex:2,height:'100%', justifyContent:'center',alignItems:'center'}}>
+                  <Text style={{color:'#514F4F',fontSize:12,fontFamily: 'Rubik-Regular'}}>GENRES</Text>
+              </View>
+          </View>
+
+
+              <ScrollView contentContainerStyle={{alignItems:'center',justifyContent:'center' }}>
           {this.state.playlist.map((song,index) =>(
-              <Text key={index}>{song[1].title}, {song[0]}</Text>
+              <PlaylistItem key={index} index={index} title={song[1].title} artist = {song[1].artist} jsonSong = {song[1]}/>
+
           ))}
               </ScrollView>
         </SafeAreaView> 
