@@ -6,7 +6,6 @@ import * as firebase from 'firebase';
 import firestore from '@firebase/firestore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-
 export default class PlaylistItem extends React.Component {
 
   constructor(props) {
@@ -25,8 +24,6 @@ export default class PlaylistItem extends React.Component {
             return (a[0] > b[0]) ? -1 : 1;
         }
     }
-  
-
 
     componentDidMount(){
         var song = this.props.jsonSong;

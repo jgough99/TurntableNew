@@ -7,6 +7,7 @@ import firestore from '@firebase/firestore';
 import { StackActions } from '@react-navigation/native';
 import { NavigationEvents } from 'react-navigation';
 import {withNavigation} from 'react-navigation';
+import BarChart from '../components/BarChart';
 
 export class Profile extends React.Component
 {
@@ -32,7 +33,7 @@ export class Profile extends React.Component
       }
 
       componentDidMount() {
-    
+        this.onScreenFocus()
         this.props.navigation.addListener('focus', this.onScreenFocus)
       }
 
@@ -58,12 +59,8 @@ render(){
     return (
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>  
             <CustomHeader title="Profile"/>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start',width:'100%'}}>
-             <Text style={{ width:(((this.state.rock)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>Rock</Text>
-            <Text style={{ width:(((this.state.hipHop)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>HipHop</Text>
-            <Text style={{ width:(((this.state.pop)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>Pop</Text>
-            <Text style={{ width:(((this.state.house)*100).toString()+"%"),borderTopRightRadius:15,borderBottomRightRadius:15, backgroundColor:'#EC6338',marginVertical:5}}>House</Text>
-            <Text style={{ width:(((this.state.electro)*100).toString()+"%"), borderTopRightRadius:15,borderBottomRightRadius:15,backgroundColor:'#EC6338',marginVertical:5}}>Electro</Text>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',width:'100%'}}>
+                <BarChart rock={Math.round(this.state.rock*100)} electro={Math.round(this.state.electro*100)} pop={Math.round(this.state.pop*100)} house={Math.round(this.state.house*100)} hiphop={Math.round(this.state.hipHop*100)}/>
                 <Button
                 title="Sign out"
                 onPress={() => this.signOutMethod()} 

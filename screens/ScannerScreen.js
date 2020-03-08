@@ -11,7 +11,6 @@ export default function ScannerScreen({navigation})
         <View style={{flex:1}}> 
             <CustomHeader title='Scanner'/>
             <BarcodeScannerScreen nav={navigation}/>
-            
       </View>
     );
 }
