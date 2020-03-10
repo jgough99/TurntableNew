@@ -40,111 +40,146 @@ export default class PlaylistItem extends React.Component {
     this.setState({ secondGenre: secondGenre[1] });
   }
 
+  getBackround() {
+    if (this.props.currentSong === true) {
+      return Constants.colors.greyHighlight;
+    } else {
+      return "white";
+    }
+  }
+
   render() {
     return (
       <View
         style={{
           flex: 1,
-          flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          height: 70,
+
           borderBottomWidth: 1,
           borderColor: "#CDCBCB",
-          width: Constants.windowWidth * 0.9
+          width: Constants.windowWidth * 0.9,
+          backgroundColor: this.getBackround()
         }}
       >
-        {/* Index */}
         <View
           style={{
             flex: 1,
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            fontFamily: "Rubik-Regular"
+            height: 70,
+            flexDirection: "row",
+            width: Constants.windowWidth * 0.9
           }}
         >
-          <Text style={{ color: "#514F4F" }}>{this.props.index + 1}</Text>
-        </View>
+          {/* Index */}
+          <View
+            style={{
+              flex: 1,
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              fontFamily: "Rubik-Regular"
+            }}
+          >
+            {this.props.currentSong && (
+              <MaterialCommunityIcons
+                name="volume-high"
+                size={25}
+                color="#514F4F"
+              />
+            )}
+            {!this.props.currentSong && (
+              <Text style={{ color: "#514F4F" }}>{this.props.index + 1}</Text>
+            )}
+          </View>
 
-        {/* Position change */}
-        <View
-          style={{
-            flex: 1,
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-            fontFamily: "Rubik-Regular"
-          }}
-        >
-          <Text>-</Text>
-        </View>
+          {/* Position change */}
+          <View
+            style={{
+              flex: 1,
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              fontFamily: "Rubik-Regular"
+            }}
+          >
+            <Text>-</Text>
+          </View>
 
-        {/* Title/Artist */}
-        <View style={{ flex: 6, height: "100%", justifyContent: "center" }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: "Rubik-Regular",
-              color: "#383838"
-            }}
-          >
-            {this.props.title}
-          </Text>
-          <Text
-            style={{
-              fontSize: 13,
-              fontFamily: "Rubik-Regular",
-              color: "#8F8F8F"
-            }}
-          >
-            {this.props.artist}
-          </Text>
-        </View>
+          {/* Title/Artist */}
+          <View style={{ flex: 6, height: "100%", justifyContent: "center" }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: "Rubik-Regular",
+                color: "#383838"
+              }}
+            >
+              {this.props.title}
+            </Text>
+            <Text
+              style={{
+                fontSize: 13,
+                fontFamily: "Rubik-Regular",
+                color: "#8F8F8F"
+              }}
+            >
+              {this.props.artist}
+            </Text>
+          </View>
 
-        {/* Genres */}
-        <View
-          style={{
-            flex: 2,
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <Text
+          {/* Genres */}
+          <View
             style={{
-              backgroundColor: "#E17A5A",
-              width: "90%",
-              textAlign: "center",
-              textAlignVertical: "center",
-              borderRadius: 15,
-              margin: 2,
-              color: "white",
-              fontFamily: "Rubik-Medium",
-              fontSize: 12,
-              height: "40%"
+              flex: 2,
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center"
             }}
           >
-            {this.state.topGenre}
-          </Text>
-          <Text
-            style={{
-              backgroundColor: "#E17A5A",
-              width: "90%",
-              textAlign: "center",
-              textAlignVertical: "center",
-              borderRadius: 15,
-              margin: 2,
-              color: "white",
-              fontFamily: "Rubik-Regular",
-              fontFamily: "Rubik-Medium",
-              fontSize: 12,
-              height: "40%"
-            }}
-          >
-            {this.state.secondGenre}
-          </Text>
+            <Text
+              style={{
+                backgroundColor: "#E17A5A",
+                width: "90%",
+                textAlign: "center",
+                textAlignVertical: "center",
+                borderRadius: 15,
+                margin: 2,
+                color: "white",
+                fontFamily: "Rubik-Medium",
+                fontSize: 12,
+                height: "40%"
+              }}
+            >
+              {this.state.topGenre}
+            </Text>
+            <Text
+              style={{
+                backgroundColor: "#E17A5A",
+                width: "90%",
+                textAlign: "center",
+                textAlignVertical: "center",
+                borderRadius: 15,
+                margin: 2,
+                color: "white",
+                fontFamily: "Rubik-Regular",
+                fontFamily: "Rubik-Medium",
+                fontSize: 12,
+                height: "40%"
+              }}
+            >
+              {this.state.secondGenre}
+            </Text>
+          </View>
         </View>
+        {this.props.currentSong && (
+          <View
+            style={{
+              width: "100%",
+              height: 40,
+              backgroundColor: "grey"
+            }}
+          ></View>
+        )}
       </View>
     );
   }

@@ -6,13 +6,15 @@ import {
   Dimensions,
   SafeAreaView,
   ScrollView,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import PlaylistItem from "../components/PlaylistItem";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
 import similarity from "compute-cosine-similarity";
+import * as Constants from "../Constants";
 
 export default class PlaylistScreen extends React.Component {
   state = {
@@ -20,7 +22,8 @@ export default class PlaylistScreen extends React.Component {
     loading: true,
     songsArray: [],
     attendees: [],
-    timer: 0
+    timer: 0,
+    currentSongIndex: 6
   };
 
   async componentDidMount() {
@@ -29,6 +32,25 @@ export default class PlaylistScreen extends React.Component {
       this.setState({ songsArray: JSON.parse(value) });
     }
 
+    this.onPlaylistChange();
+    this.onAttendanceChange();
+  }
+
+  onPlaylistChange() {
+    //Every time the playlist changes
+    const db = firebase.firestore();
+
+    db.collection("event")
+      .doc(this.props.eventId.toString())
+      .onSnapshot(
+        docSnapshot => {},
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
+  }
+
+  onAttendanceChange() {
     const db = firebase.firestore();
 
     //Every time the attendance state of an event changes
@@ -54,16 +76,6 @@ export default class PlaylistScreen extends React.Component {
           this.playlistUpdate();
           console.log("THE PLAYLIST HAS UPDATED");
         },
-        err => {
-          console.log(`Encountered error: ${err}`);
-        }
-      );
-
-    //Every time the playlist changes
-    db.collection("event")
-      .doc(this.props.eventId.toString())
-      .onSnapshot(
-        docSnapshot => {},
         err => {
           console.log(`Encountered error: ${err}`);
         }
@@ -137,13 +149,20 @@ export default class PlaylistScreen extends React.Component {
       });
   }
 
+  currentSongCheck(index) {
+    if (index === this.state.currentSongIndex) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   render() {
     if (this.state.loading == false) {
       return (
         <SafeAreaView
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <Text>{this.state.timer}</Text>
           <View
             style={{
               flex: 1,
@@ -221,6 +240,7 @@ export default class PlaylistScreen extends React.Component {
               <PlaylistItem
                 key={index}
                 index={index}
+                currentSong={this.currentSongCheck(index)}
                 title={song[1].title}
                 artist={song[1].artist}
                 jsonSong={song[1]}
@@ -230,7 +250,9 @@ export default class PlaylistScreen extends React.Component {
         </SafeAreaView>
       );
     } else {
-      return <Text>Loading</Text>;
+      return (
+        <ActivityIndicator size="large" color={Constants.colors.primary} />
+      );
     }
   }
 }

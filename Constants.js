@@ -6,7 +6,8 @@ export const colors = {
   background: "#FFFFFF",
   card: "rgb(255, 255, 255)",
   text: "rgb(28, 28, 30)",
-  border: "rgb(199, 199, 204)"
+  border: "rgb(199, 199, 204)",
+  greyHighlight: "#F3F3F3"
 };
 
 export const windowWidth = Dimensions.get("window").width;
