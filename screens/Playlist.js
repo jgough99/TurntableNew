@@ -9,13 +9,9 @@ import {
   AsyncStorage
 } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import CustomHeader from "../components/Header";
 import PlaylistItem from "../components/PlaylistItem";
-
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
-import { withNavigation } from "react-navigation";
-import QRCode from "react-native-qrcode-svg";
 import similarity from "compute-cosine-similarity";
 
 export default class PlaylistScreen extends React.Component {
@@ -26,6 +22,53 @@ export default class PlaylistScreen extends React.Component {
     attendees: [],
     timer: 0
   };
+
+  async componentDidMount() {
+    var value = await AsyncStorage.getItem("songsArray2");
+    if (value !== null) {
+      this.setState({ songsArray: JSON.parse(value) });
+    }
+
+    const db = firebase.firestore();
+
+    //Every time the attendance state of an event changes
+    db.collection("attendance")
+      .where("eventId", "==", this.props.eventId.toString())
+      .onSnapshot(
+        querySnapshot => {
+          if (querySnapshot.empty) {
+            console.log("No matching documents.");
+          }
+          this.setState({ attendees: [] });
+          querySnapshot.forEach(doc => {
+            if (doc.data().active === true) {
+              db.collection("user")
+                .doc(doc.data().userId)
+                .get()
+                .then(snapshot => {
+                  this.state.attendees.push(snapshot.data());
+                });
+            }
+          });
+
+          this.playlistUpdate();
+          console.log("THE PLAYLIST HAS UPDATED");
+        },
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
+
+    //Every time the playlist changes
+    db.collection("event")
+      .doc(this.props.eventId.toString())
+      .onSnapshot(
+        docSnapshot => {},
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
+  }
 
   sortFunction(a, b) {
     if (a[0] === b[0]) {
@@ -94,52 +137,6 @@ export default class PlaylistScreen extends React.Component {
       });
   }
 
-  async componentDidMount() {
-    var value = await AsyncStorage.getItem("songsArray2");
-    if (value !== null) {
-      this.setState({ songsArray: JSON.parse(value) });
-    }
-
-    const db = firebase.firestore();
-
-    //Every time the attendance state of an event changes
-    db.collection("attendance")
-      .where("eventId", "==", this.props.eventId.toString())
-      .onSnapshot(
-        querySnapshot => {
-          if (querySnapshot.empty) {
-            console.log("No matching documents.");
-          }
-          this.setState({ attendees: [] });
-          querySnapshot.forEach(doc => {
-            if (doc.data().active === true) {
-              db.collection("user")
-                .doc(doc.data().userId)
-                .get()
-                .then(snapshot => {
-                  this.state.attendees.push(snapshot.data());
-                });
-            }
-          });
-
-          this.playlistUpdate();
-          console.log("THE PLAYLIST HAS UPDATED");
-        },
-        err => {
-          console.log(`Encountered error: ${err}`);
-        }
-      );
-
-    //Every time the playlist changes
-    db.collection("event")
-      .doc(this.props.eventId.toString())
-      .onSnapshot(
-        docSnapshot => {},
-        err => {
-          console.log(`Encountered error: ${err}`);
-        }
-      );
-  }
   render() {
     if (this.state.loading == false) {
       return (

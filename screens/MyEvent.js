@@ -15,8 +15,9 @@ import { withNavigation } from "react-navigation";
 import QRCode from "react-native-qrcode-svg";
 import similarity from "compute-cosine-similarity";
 import PlaylistScreen from "./Playlist";
+import StatisticsScreen from "./Statistics";
 
-export function GenericHomeScreen() {
+export function PlaylistComponent() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <PlaylistScreen eventId={eventIdGlobal} />
@@ -24,7 +25,15 @@ export function GenericHomeScreen() {
   );
 }
 
-export function CodeScreen() {
+export function StatisticsComponent() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <StatisticsScreen eventId={eventIdGlobal} />
+    </View>
+  );
+}
+
+export function CodeComponent() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <QRCode
@@ -35,59 +44,6 @@ export function CodeScreen() {
       />
     </View>
   );
-}
-
-export class StatisticsScreen extends React.Component {
-  state = {
-    attendees: [],
-    loading: true
-  };
-
-  componentDidMount() {
-    const db = firebase.firestore();
-
-    db.collection("attendance")
-      .where("eventId", "==", eventIdGlobal.toString())
-      .where("active", "==", true)
-      .onSnapshot(
-        querySnapshot => {
-          if (querySnapshot.empty) {
-            console.log("No matching documents.");
-            this.setState({ loading: false });
-            this.setState({ attendees: [] });
-            return;
-          }
-          this.setState({ attendees: [] });
-          querySnapshot.forEach(doc => {
-            this.state.attendees.push(doc.data().userId);
-          });
-          this.setState({ loading: false });
-        },
-        err => {
-          console.log(`Encountered error: ${err}`);
-        }
-      );
-  }
-
-  render() {
-    if (this.state.loading) {
-      return (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text>Loading</Text>
-        </View>
-      );
-    } else {
-      return (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text>{this.state.attendees}</Text>
-        </View>
-      );
-    }
-  }
 }
 
 var eventIdGlobal = 0;
@@ -141,17 +97,17 @@ export class MyEvent extends React.Component {
           >
             <Tab.Screen
               name="Feed"
-              component={GenericHomeScreen}
+              component={PlaylistComponent}
               options={{ tabBarLabel: "Playlist" }}
             />
             <Tab.Screen
               name="Notifications"
-              component={CodeScreen}
+              component={CodeComponent}
               options={{ tabBarLabel: "QR Code" }}
             />
             <Tab.Screen
               name="Profile"
-              component={StatisticsScreen}
+              component={StatisticsComponent}
               options={{ tabBarLabel: "Statistics" }}
             />
           </Tab.Navigator>
