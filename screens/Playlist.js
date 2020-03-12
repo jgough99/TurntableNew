@@ -28,17 +28,8 @@ export default class PlaylistScreen extends React.Component {
   };
 
   async componentDidMount() {
-    var value = await AsyncStorage.getItem("songsArray2");
-    if (value !== null) {
-      this.setState({ songsArray: JSON.parse(value) });
-    }
-
-    var songsArrayLength = this.state.songsArray.length;
-    for (var i = 0; i < songsArrayLength; i++) {
-      var data = this.state.songsArray[i].data;
-      this.state.playlist.push([0, data]);
-    }
-
+    await this.getArrayFromStorage();
+    await this.initialPlaylistSetup();
     await this.onAttendanceChange();
     await this.timer();
   }
@@ -47,24 +38,27 @@ export default class PlaylistScreen extends React.Component {
     clearInterval(this.interval);
   }
 
-  onPlaylistChange() {
-    //Every time the playlist changes
-    const db = firebase.firestore();
-
-    db.collection("event")
-      .doc(this.props.eventId.toString())
-      .onSnapshot(
-        docSnapshot => {},
-        err => {
-          console.log(`Encountered error: ${err}`);
-        }
-      );
+  //Get the songs from storage
+  async getArrayFromStorage() {
+    var value = await AsyncStorage.getItem("songsArray2");
+    if (value !== null) {
+      this.setState({ songsArray: JSON.parse(value) });
+    }
   }
 
+  //First playlist setup
+  initialPlaylistSetup() {
+    var songsArrayLength = this.state.songsArray.length;
+    for (var i = 0; i < songsArrayLength; i++) {
+      var data = this.state.songsArray[i].data;
+      this.state.playlist.push([0, data]);
+    }
+  }
+
+  //Every time the attendance state of an event changes
   onAttendanceChange() {
     const db = firebase.firestore();
 
-    //Every time the attendance state of an event changes
     db.collection("attendance")
       .where("eventId", "==", this.props.eventId.toString())
       .where("active", "==", true)
@@ -91,6 +85,7 @@ export default class PlaylistScreen extends React.Component {
       );
   }
 
+  //Sorting the array
   sortFunction(a, b) {
     if (a[0] === b[0]) {
       return 0;
@@ -99,6 +94,7 @@ export default class PlaylistScreen extends React.Component {
     }
   }
 
+  //Update the playlist
   playlistUpdate() {
     var userPreferences = null;
     this.setState({ loading: true });
@@ -176,6 +172,7 @@ export default class PlaylistScreen extends React.Component {
       });
   }
 
+  //Return true if the indexed item is the current song
   currentSongCheck(index) {
     if (index === this.state.currentSongIndex) {
       return true;
@@ -184,6 +181,7 @@ export default class PlaylistScreen extends React.Component {
     }
   }
 
+  //Return the timer state if the indexed item is the current song
   currentSongTimer(index) {
     if (index === this.state.currentSongIndex) {
       return this.state.timer;
@@ -192,6 +190,17 @@ export default class PlaylistScreen extends React.Component {
     }
   }
 
+  //When the next song is loaded 
+  nextSong() {
+    this.setState({ currentSongIndex: this.state.currentSongIndex + 1 });
+    this.setState({ timer: 0 });
+    if (this.state.attendees.length>0)
+    {
+      
+    }
+  }
+
+  //Start the timer
   timer() {
     this.interval = setInterval(() => {
       if (
@@ -201,10 +210,24 @@ export default class PlaylistScreen extends React.Component {
       ) {
         this.setState({ timer: this.state.timer + 1 });
       } else {
-        this.setState({ currentSongIndex: this.state.currentSongIndex + 1 });
-        this.setState({ timer: 0 });
+        this.nextSong();
       }
     }, 1000);
+  }
+
+  //Every time the playlist changes (MAYBE NOT NEEDED)
+  onPlaylistChange() {
+    //Every time the playlist changes
+    const db = firebase.firestore();
+
+    db.collection("event")
+      .doc(this.props.eventId.toString())
+      .onSnapshot(
+        docSnapshot => {},
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
   }
 
   render() {
