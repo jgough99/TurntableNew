@@ -16,6 +16,7 @@ import firestore from "@firebase/firestore";
 import similarity from "compute-cosine-similarity";
 import * as Constants from "../Constants";
 import { Slider } from "react-native-elements";
+import Toast from "react-native-tiny-toast";
 
 export default class PlaylistScreen extends React.Component {
   state = {
@@ -98,7 +99,10 @@ export default class PlaylistScreen extends React.Component {
             console.log("No event");
           }
           if (querySnapshot.data().nextSong === 1) {
+            Toast.show("Dance scores are in!");
+
             this.playlistUpdate();
+
             db.collection("event")
               .doc(this.props.eventId)
               .update({ nextSong: 0 });
@@ -353,7 +357,9 @@ export default class PlaylistScreen extends React.Component {
       );
     } else {
       return (
-        <ActivityIndicator size="large" color={Constants.colors.primary} />
+        <View>
+          <ActivityIndicator size="large" color={Constants.colors.primary} />
+        </View>
       );
     }
   }

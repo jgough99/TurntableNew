@@ -5,6 +5,7 @@ import CustomHeader from "../components/Header";
 import { withNavigation } from "react-navigation";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
+import Toast from "react-native-tiny-toast";
 
 export class AtEvent extends React.Component {
   state = {
@@ -47,6 +48,8 @@ export class AtEvent extends React.Component {
       .onSnapshot(
         querySnapshot => {
           if (querySnapshot.data().nextSong > 1) {
+            Toast.show("Dance scores sent!");
+
             const decrement = firebase.firestore.FieldValue.increment(-1);
             //Add the users score to the database
             db.collection("userSong")
