@@ -35,6 +35,42 @@ export class AtEvent extends React.Component {
         console.log("Error getting documents", err);
         this.setState({ loading: false });
       });
+    this.onEventChange();
+  }
+
+  //Every time the attendance state of an event changes
+  onEventChange() {
+    const db = firebase.firestore();
+
+    db.collection("event")
+      .doc(this.props.route.params.eventId.toString())
+      .onSnapshot(
+        querySnapshot => {
+          if (querySnapshot.data().nextSong > 1) {
+            const decrement = firebase.firestore.FieldValue.increment(-1);
+            //Add the users score to the database
+            db.collection("userSong")
+              .doc(
+                this.props.route.params.eventId.toString() +
+                  firebase.auth().currentUser.uid.toString()
+              )
+              .set({
+                userId: firebase.auth().currentUser.uid,
+                eventId: this.props.route.params.eventId,
+                songId: "exampleSong",
+                danceScore: 0.5
+              });
+
+            //Next song -1
+            db.collection("event")
+              .doc(this.props.route.params.eventId)
+              .update({ nextSong: decrement });
+          }
+        },
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
   }
 
   exitEvent(navigation) {
