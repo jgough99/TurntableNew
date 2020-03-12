@@ -174,11 +174,21 @@ export default class PlaylistItem extends React.Component {
         {this.props.currentSong && (
           <View
             style={{
+              alignItems: "center",
               width: "100%",
               height: 40,
-              backgroundColor: "grey"
+              backgroundColor: Constants.colors.greyHighlight
             }}
-          ></View>
+          >
+            <Slider
+              style={{ width: "70%" }}
+              value={this.props.timer}
+              onValueChange={value => this.setState({ value })}
+              thumbStyle={{ width: 0 }}
+              maximumValue={(this.props.jsonSong.duration * 60) / 4}
+              disabled={true}
+            />
+          </View>
         )}
       </View>
     );

@@ -15,6 +15,7 @@ import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
 import similarity from "compute-cosine-similarity";
 import * as Constants from "../Constants";
+import { Slider } from "react-native-elements";
 
 export default class PlaylistScreen extends React.Component {
   state = {
@@ -23,7 +24,7 @@ export default class PlaylistScreen extends React.Component {
     songsArray: [],
     attendees: [],
     timer: 0,
-    currentSongIndex: 6
+    currentSongIndex: 0
   };
 
   async componentDidMount() {
@@ -32,8 +33,18 @@ export default class PlaylistScreen extends React.Component {
       this.setState({ songsArray: JSON.parse(value) });
     }
 
-    this.onPlaylistChange();
-    this.onAttendanceChange();
+    var songsArrayLength = this.state.songsArray.length;
+    for (var i = 0; i < songsArrayLength; i++) {
+      var data = this.state.songsArray[i].data;
+      this.state.playlist.push([0, data]);
+    }
+
+    await this.onAttendanceChange();
+    await this.timer();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   onPlaylistChange() {
@@ -56,6 +67,7 @@ export default class PlaylistScreen extends React.Component {
     //Every time the attendance state of an event changes
     db.collection("attendance")
       .where("eventId", "==", this.props.eventId.toString())
+      .where("active", "==", true)
       .onSnapshot(
         querySnapshot => {
           if (querySnapshot.empty) {
@@ -63,18 +75,15 @@ export default class PlaylistScreen extends React.Component {
           }
           this.setState({ attendees: [] });
           querySnapshot.forEach(doc => {
-            if (doc.data().active === true) {
-              db.collection("user")
-                .doc(doc.data().userId)
-                .get()
-                .then(snapshot => {
-                  this.state.attendees.push(snapshot.data());
-                });
-            }
+            db.collection("user")
+              .doc(doc.data().userId)
+              .get()
+              .then(snapshot => {
+                this.state.attendees.push(snapshot.data());
+              });
           });
 
           this.playlistUpdate();
-          console.log("THE PLAYLIST HAS UPDATED");
         },
         err => {
           console.log(`Encountered error: ${err}`);
@@ -99,16 +108,29 @@ export default class PlaylistScreen extends React.Component {
       .get()
       .then(snapshot => {
         userPreferences = snapshot.data();
-        console.log(this.state.attendees);
-
         var attendeesArrayLength = this.state.attendees.length;
         var rock = userPreferences.rock;
         var hiphop = userPreferences.hipHop;
         var electro = userPreferences.electro;
         var house = userPreferences.house;
         var pop = userPreferences.pop;
+        var previousPlaylistStart = [];
+        var previousPlaylistEnd = [];
 
-        this.setState({ playlist: [] });
+        previousPlaylistStart = this.state.playlist.slice(
+          0,
+          this.state.currentSongIndex + 1
+        );
+
+        previousPlaylistEnd = this.state.playlist.slice(
+          this.state.currentSongIndex + 1,
+          this.state.songsArray.length
+        );
+
+        this.setState({
+          playlist: []
+        });
+
         if (attendeesArrayLength > 0) {
           for (var i = 0; i < attendeesArrayLength; i++) {
             rock = rock + this.state.attendees[i].rock;
@@ -127,9 +149,10 @@ export default class PlaylistScreen extends React.Component {
         house = house / totalNumberOfAttendees;
         pop = pop / totalNumberOfAttendees;
 
-        var songsArrayLength = this.state.songsArray.length;
+        var songsArrayLength = previousPlaylistEnd.length;
         for (var i = 0; i < songsArrayLength; i++) {
-          var data = this.state.songsArray[i].data;
+          var data = previousPlaylistEnd[i][1];
+          console.log("Pushed!");
           this.state.playlist.push([
             similarity(
               [data.rock, data.hiphop, data.electro, data.house, data.pop],
@@ -140,6 +163,10 @@ export default class PlaylistScreen extends React.Component {
         }
 
         this.state.playlist.sort(this.sortFunction);
+
+        this.setState({
+          playlist: previousPlaylistStart.concat(this.state.playlist)
+        });
         this.setState({ loading: false });
       })
 
@@ -155,6 +182,29 @@ export default class PlaylistScreen extends React.Component {
     } else {
       return false;
     }
+  }
+
+  currentSongTimer(index) {
+    if (index === this.state.currentSongIndex) {
+      return this.state.timer;
+    } else {
+      return 1;
+    }
+  }
+
+  timer() {
+    this.interval = setInterval(() => {
+      if (
+        (this.state.playlist[this.state.currentSongIndex][1].duration * 60) /
+          4 >
+        this.state.timer
+      ) {
+        this.setState({ timer: this.state.timer + 1 });
+      } else {
+        this.setState({ currentSongIndex: this.state.currentSongIndex + 1 });
+        this.setState({ timer: 0 });
+      }
+    }, 1000);
   }
 
   render() {
@@ -244,6 +294,7 @@ export default class PlaylistScreen extends React.Component {
                 title={song[1].title}
                 artist={song[1].artist}
                 jsonSong={song[1]}
+                timer={this.currentSongTimer(index)}
               />
             ))}
           </ScrollView>
