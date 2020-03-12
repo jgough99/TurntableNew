@@ -28,7 +28,8 @@ export class CreateEvent extends React.Component {
       type: this.state.type === 0 ? "Private" : "Public",
       startTime: firebase.firestore.Timestamp.fromDate(this.state.date),
       userId: firebase.auth().currentUser.uid,
-      playlist: []
+      playlist: [],
+      nextSong: 0
     });
     navigation.navigate("Home");
   }

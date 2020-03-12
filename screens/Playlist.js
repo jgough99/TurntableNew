@@ -148,7 +148,6 @@ export default class PlaylistScreen extends React.Component {
         var songsArrayLength = previousPlaylistEnd.length;
         for (var i = 0; i < songsArrayLength; i++) {
           var data = previousPlaylistEnd[i][1];
-          console.log("Pushed!");
           this.state.playlist.push([
             similarity(
               [data.rock, data.hiphop, data.electro, data.house, data.pop],
@@ -190,14 +189,17 @@ export default class PlaylistScreen extends React.Component {
     }
   }
 
-  //When the next song is loaded 
+  //When the next song is loaded
   nextSong() {
+    const db = firebase.firestore();
     this.setState({ currentSongIndex: this.state.currentSongIndex + 1 });
     this.setState({ timer: 0 });
-    if (this.state.attendees.length>0)
-    {
-      
-    }
+
+    db.collection("event")
+      .doc(this.props.eventId)
+      .update({
+        nextSong: this.state.attendees.length + 1
+      });
   }
 
   //Start the timer

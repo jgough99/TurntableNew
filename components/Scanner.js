@@ -1,11 +1,17 @@
 import * as React from "react";
-import { Text, View, StyleSheet, Button, Dimensions } from "react-native";
-import Constants from "expo-constants";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  Dimensions,
+  ActivityIndicator
+} from "react-native";
 import * as Permissions from "expo-permissions";
 import { useNavigation } from "@react-navigation/native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Ionicons } from "@expo/vector-icons";
-
+import * as Constants from "../Constants";
 //mdiImageFilterCenterFocusWeak
 
 export default class BarcodeScannerScreen extends React.Component {
@@ -31,7 +37,11 @@ export default class BarcodeScannerScreen extends React.Component {
     const { hasCameraPermission, scanned } = this.state;
 
     if (hasCameraPermission === null) {
-      return <Text>Requesting for camera permission</Text>;
+      return (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" color={Constants.colors.primary} />
+        </View>
+      );
     }
     if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;
