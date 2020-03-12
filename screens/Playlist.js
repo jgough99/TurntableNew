@@ -31,6 +31,7 @@ export default class PlaylistScreen extends React.Component {
     await this.getArrayFromStorage();
     await this.initialPlaylistSetup();
     await this.onAttendanceChange();
+    await this.onEventChange();
     await this.timer();
   }
 
@@ -65,7 +66,7 @@ export default class PlaylistScreen extends React.Component {
       .onSnapshot(
         querySnapshot => {
           if (querySnapshot.empty) {
-            console.log("No matching documents.");
+            console.log("No attendees");
           }
           this.setState({ attendees: [] });
           querySnapshot.forEach(doc => {
@@ -78,6 +79,30 @@ export default class PlaylistScreen extends React.Component {
           });
 
           this.playlistUpdate();
+        },
+        err => {
+          console.log(`Encountered error: ${err}`);
+        }
+      );
+  }
+
+  //Every time the attendance state of an event changes
+  onEventChange() {
+    const db = firebase.firestore();
+
+    db.collection("event")
+      .doc(this.props.eventId.toString())
+      .onSnapshot(
+        querySnapshot => {
+          if (querySnapshot.empty) {
+            console.log("No event");
+          }
+          if (querySnapshot.data().nextSong === 1) {
+            this.playlistUpdate();
+            db.collection("event")
+              .doc(this.props.eventId)
+              .update({ nextSong: 0 });
+          }
         },
         err => {
           console.log(`Encountered error: ${err}`);
@@ -194,12 +219,13 @@ export default class PlaylistScreen extends React.Component {
     const db = firebase.firestore();
     this.setState({ currentSongIndex: this.state.currentSongIndex + 1 });
     this.setState({ timer: 0 });
-
-    db.collection("event")
-      .doc(this.props.eventId)
-      .update({
-        nextSong: this.state.attendees.length + 1
-      });
+    if (this.state.attendees.length != 0) {
+      db.collection("event")
+        .doc(this.props.eventId)
+        .update({
+          nextSong: this.state.attendees.length + 1
+        });
+    }
   }
 
   //Start the timer
