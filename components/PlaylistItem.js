@@ -25,7 +25,7 @@ export default class PlaylistItem extends React.Component {
   }
 
   componentDidMount() {
-    var song = this.props.jsonSong;
+    var song = this.props.jsonSong.data;
     var genresArray = [
       [song.rock, "ROCK"],
       [song.house, "HOUSE"],
@@ -185,7 +185,7 @@ export default class PlaylistItem extends React.Component {
               value={this.props.timer}
               onValueChange={value => this.setState({ value })}
               thumbStyle={{ width: 0 }}
-              maximumValue={(this.props.jsonSong.duration * 60) / 4}
+              maximumValue={(this.props.jsonSong.data.duration * 60) / 4}
               disabled={true}
             />
           </View>

@@ -45,6 +45,7 @@ export default class PlaylistScreen extends React.Component {
     var value = await AsyncStorage.getItem("songsArray2");
     if (value !== null) {
       this.setState({ songsArray: JSON.parse(value) });
+      console.log(this.state.songsArray[1]);
     }
   }
 
@@ -52,7 +53,7 @@ export default class PlaylistScreen extends React.Component {
   initialPlaylistSetup() {
     var songsArrayLength = this.state.songsArray.length;
     for (var i = 0; i < songsArrayLength; i++) {
-      var data = this.state.songsArray[i].data;
+      var data = this.state.songsArray[i];
       this.state.playlist.push([0, data]);
     }
   }
@@ -179,7 +180,13 @@ export default class PlaylistScreen extends React.Component {
           var data = previousPlaylistEnd[i][1];
           this.state.playlist.push([
             similarity(
-              [data.rock, data.hiphop, data.electro, data.house, data.pop],
+              [
+                data.data.rock,
+                data.data.hiphop,
+                data.data.electro,
+                data.data.house,
+                data.data.pop
+              ],
               [rock, hiphop, electro, house, pop]
             ),
             data
@@ -227,7 +234,10 @@ export default class PlaylistScreen extends React.Component {
       db.collection("event")
         .doc(this.props.eventId)
         .update({
-          nextSong: this.state.attendees.length + 1
+          nextSong: this.state.attendees.length + 1,
+          previousSongId: this.state.playlist[
+            this.state.currentSongIndex - 1
+          ][1].id
         });
     }
   }
@@ -236,7 +246,8 @@ export default class PlaylistScreen extends React.Component {
   timer() {
     this.interval = setInterval(() => {
       if (
-        (this.state.playlist[this.state.currentSongIndex][1].duration * 60) /
+        (this.state.playlist[this.state.currentSongIndex][1].data.duration *
+          60) /
           4 >
         this.state.timer
       ) {
@@ -346,8 +357,8 @@ export default class PlaylistScreen extends React.Component {
                 key={index}
                 index={index}
                 currentSong={this.currentSongCheck(index)}
-                title={song[1].title}
-                artist={song[1].artist}
+                title={song[1].data.title}
+                artist={song[1].data.artist}
                 jsonSong={song[1]}
                 timer={this.currentSongTimer(index)}
               />

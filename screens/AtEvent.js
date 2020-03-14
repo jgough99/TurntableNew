@@ -11,7 +11,8 @@ export class AtEvent extends React.Component {
   state = {
     codeValue: this.props.route.params.eventId,
     title: "",
-    loading: true
+    loading: true,
+    lastUpdatedSong: ""
   };
 
   componentDidMount() {
@@ -44,23 +45,29 @@ export class AtEvent extends React.Component {
     const db = firebase.firestore();
 
     db.collection("event")
-      .doc(this.props.route.params.eventId.toString())
+      .doc(this.props.route.params.eventId)
       .onSnapshot(
         querySnapshot => {
-          if (querySnapshot.data().nextSong > 1) {
+          if (
+            querySnapshot.data().nextSong > 1 &&
+            querySnapshot.data().previousSongId != this.state.lastUpdatedSong
+          ) {
             Toast.show("Dance scores sent!");
-
+            this.setState({
+              lastUpdatedSong: querySnapshot.data().previousSongId
+            });
             const decrement = firebase.firestore.FieldValue.increment(-1);
             //Add the users score to the database
             db.collection("userSong")
               .doc(
                 this.props.route.params.eventId.toString() +
-                  firebase.auth().currentUser.uid.toString()
+                  firebase.auth().currentUser.uid.toString() +
+                  querySnapshot.data().previousSongId.toString()
               )
               .set({
                 userId: firebase.auth().currentUser.uid,
                 eventId: this.props.route.params.eventId,
-                songId: "exampleSong",
+                songId: querySnapshot.data().previousSongId,
                 danceScore: 0.5
               });
 
@@ -105,6 +112,7 @@ export class AtEvent extends React.Component {
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
             <Text> You are at an event called:{this.state.title}</Text>
+            <Text> Last updated song:{this.state.lastUpdatedSong}</Text>
             <Button
               title="BACK"
               onPress={() => this.exitEvent(this.props.navigation)}
