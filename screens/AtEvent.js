@@ -6,6 +6,34 @@ import { withNavigation } from "react-navigation";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
 import Toast from "react-native-tiny-toast";
+import * as Speech from "expo-speech";
+import { Accelerometer } from "expo-sensors";
+import functions from "@firebase/functions";
+
+var firebaseConfig = {
+  apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
+  authDomain: "reactnative-f82c6.firebaseapp.com",
+  databaseURL: "https://reactnative-f82c6.firebaseio.com",
+  projectId: "reactnative-f82c6",
+  storageBucket: "reactnative-f82c6.appspot.com",
+  messagingSenderId: "382800399674",
+  appId: "1:382800399674:web:d83dc73f6fef1498851403",
+  measurementId: "G-W29WJ4DWPY"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+var storageRef = firebase.storage().ref();
+var mountainsRef = storageRef.child("thisFile.txt");
+
+var theBigOne = [];
+var accelerometerDatas = [];
+var counter = 0;
+var bigCounter = 0;
+var data = "";
+var htmlString = "";
 
 export class AtEvent extends React.Component {
   state = {
@@ -17,6 +45,10 @@ export class AtEvent extends React.Component {
 
   componentDidMount() {
     const db = firebase.firestore();
+
+    this._toggle();
+    Accelerometer.setUpdateInterval(50);
+    Speech.speak("Start Moving Now");
 
     db.collection("event")
       .doc(this.state.codeValue.toString())
@@ -39,6 +71,68 @@ export class AtEvent extends React.Component {
       });
     this.onEventChange();
   }
+
+  async getTheML() {
+    var response = await fetch(
+      "https://us-central1-reactnative-f82c6.cloudfunctions.net/HAR?{name:%20%27thisFile.txt%27}"
+    );
+    htmlString = await response.text();
+    console.log(htmlString);
+    Speech.speak(parseFloat(htmlString) * 100 + " percent dancing");
+  }
+
+  async performCloudFunct() {
+    var blob = new Blob([data], { type: "application/json" });
+    await mountainsRef.put(blob).then(function(snapshot) {
+      console.log("Uploaded a blob!");
+    });
+    this.getTheML();
+  }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+  _toggle = () => {
+    if (this._subscription) {
+      this._unsubscribe();
+    } else {
+      this._subscribe();
+    }
+  };
+
+  _subscribe = () => {
+    this._subscription = Accelerometer.addListener(accelerometerData => {
+      if (bigCounter < 5) {
+        if (counter < 80) {
+          var temp = [
+            [accelerometerData.x * 9.81],
+            [accelerometerData.y * 9.81],
+            [accelerometerData.z * 9.81]
+          ];
+          accelerometerDatas.push(temp);
+          counter = counter + 1;
+        } else {
+          theBigOne.push(accelerometerDatas);
+          bigCounter = bigCounter + 1;
+          counter = 0;
+          accelerometerDatas = [];
+          console.log(bigCounter);
+          Speech.speak(bigCounter.toString());
+        }
+      } else {
+        data = JSON.stringify(theBigOne);
+        console.log(data);
+        this.performCloudFunct();
+        this._toggle();
+      }
+    });
+  };
+
+  _unsubscribe = () => {
+    this._subscription && this._subscription.remove();
+    this._subscription = null;
+  };
 
   //Every time the attendance state of an event changes
   onEventChange() {

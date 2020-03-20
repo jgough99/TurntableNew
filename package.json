@@ -18,6 +18,8 @@
     "compute-cosine-similarity": "^1.0.0",
     "expo": "~36.0.0",
     "expo-barcode-scanner": "~8.0.0",
+    "expo-sensors": "~8.0.0",
+    "expo-speech": "~8.0.0",
     "firebase": "7.9.0",
     "install": "^0.13.0",
     "mathjs": "^6.6.1",
