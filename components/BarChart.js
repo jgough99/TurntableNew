@@ -50,9 +50,10 @@ export default class BarChart extends React.Component {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          maxHeight: Constants.windowWidth * 0.75,
-          transform: [{ rotate: "-90deg" }]
+          justifyContent: "center"
+          //alignItems: "center",
+          //borderRadius: 15,
+          //borderWidth: 1
         }}
       >
         <View style={[styles.bar, { width: 160 + this.props.rock }]}>

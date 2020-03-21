@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, ActivityIndicator } from "react-native";
 import { Header, Card, Button } from "react-native-elements";
 import CustomHeader from "../components/Header";
 import * as firebase from "firebase";
@@ -8,6 +8,7 @@ import { StackActions } from "@react-navigation/native";
 import { NavigationEvents } from "react-navigation";
 import { withNavigation } from "react-navigation";
 import BarChart from "../components/BarChart";
+import * as Constants from "../Constants";
 
 export class Profile extends React.Component {
   constructor(props) {
@@ -18,7 +19,8 @@ export class Profile extends React.Component {
       pop: "",
       house: "",
       hipHop: "",
-      electro: ""
+      electro: "",
+      prefsLoading: true
     };
   }
   signOutMethod() {
@@ -31,6 +33,7 @@ export class Profile extends React.Component {
   }
 
   onScreenFocus = () => {
+    this.setState({ prefsLoading: true });
     const db = firebase.firestore();
     db.collection("user")
       .doc(firebase.auth().currentUser.uid)
@@ -41,6 +44,7 @@ export class Profile extends React.Component {
         this.setState({ house: doc.data().house });
         this.setState({ hipHop: doc.data().hipHop });
         this.setState({ electro: doc.data().electro });
+        this.setState({ prefsLoading: false });
       })
       .catch(err => {
         console.log("Error getting documents", err);
@@ -49,36 +53,60 @@ export class Profile extends React.Component {
 
   render() {
     return (
-      <View
-        style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
-      >
-        <CustomHeader title="Profile" />
+      <View style={{ flex: 1 }}>
+        <CustomHeader title="Profile" navigation={this.props.navigation} />
         <View
           style={{
             flex: 1,
             justifyContent: "center",
-            alignItems: "center",
-            width: "100%"
+            alignItems: "center"
           }}
         >
-          <BarChart
-            rock={Math.round(this.state.rock * 100)}
-            electro={Math.round(this.state.electro * 100)}
-            pop={Math.round(this.state.pop * 100)}
-            house={Math.round(this.state.house * 100)}
-            hiphop={Math.round(this.state.hipHop * 100)}
-          />
-          <Button title="Sign out" onPress={() => this.signOutMethod()} />
+          <View
+            style={{
+              backgroundColor: "white",
+              flex: 1,
+              justifyContent: "center",
+              borderRadius: 15,
+              padding: 15,
+              transform: [{ rotate: "-90deg" }],
+              minWidth: "70%",
+              borderColor: "white",
+              elevation: 5
+            }}
+          >
+            {!this.state.prefsLoading && (
+              <BarChart
+                rock={Math.round(this.state.rock * 100)}
+                electro={Math.round(this.state.electro * 100)}
+                pop={Math.round(this.state.pop * 100)}
+                house={Math.round(this.state.house * 100)}
+                hiphop={Math.round(this.state.hipHop * 100)}
+              />
+            )}
+            {this.state.prefsLoading && (
+              <ActivityIndicator color={Constants.colors.primary} />
+            )}
+          </View>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Button
+              style={{ marginVertical: 10 }}
+              title="Sign out"
+              onPress={() => this.signOutMethod()}
+            />
 
-          <Button
-            title="Create Event"
-            onPress={() => this.props.navigation.navigate("CreateEvent")}
-          />
+            <Button
+              style={{ marginTop: 10 }}
+              title="Create Event"
+              onPress={() => this.props.navigation.navigate("CreateEvent")}
+            />
 
-          <Button
-            title="Go to my events"
-            onPress={() => this.props.navigation.navigate("MyEventsList")}
-          />
+            <Button
+              style={{ marginVertical: 10 }}
+              title="Go to my events"
+              onPress={() => this.props.navigation.navigate("MyEventsList")}
+            />
+          </View>
         </View>
       </View>
     );
