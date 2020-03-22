@@ -24,14 +24,14 @@ var firebaseConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
+var currentID = "";
 
 var storageRef = firebase.storage().ref();
-var mountainsRef = storageRef.child("thisFile.txt");
+var mountainsRef;
 
 var theBigOne = [];
 var accelerometerDatas = [];
 var counter = 0;
-var bigCounter = 0;
 var data = "";
 var htmlString = "";
 
@@ -40,12 +40,17 @@ export class AtEvent extends React.Component {
     codeValue: this.props.route.params.eventId,
     title: "",
     loading: true,
-    lastUpdatedSong: ""
+    lastUpdatedSong: "",
+    songChange: false,
+    danceScore: ""
   };
 
   componentDidMount() {
     const db = firebase.firestore();
-
+    if (firebase.auth()) {
+      currentID = firebase.auth().currentUser.uid.toString();
+      mountainsRef = storageRef.child(currentID + ".txt");
+    }
     this._toggle();
     Accelerometer.setUpdateInterval(50);
     Speech.speak("Start Moving Now");
@@ -74,11 +79,14 @@ export class AtEvent extends React.Component {
 
   async getTheML() {
     var response = await fetch(
-      "https://us-central1-reactnative-f82c6.cloudfunctions.net/HAR?{name:%20%27thisFile.txt%27}"
+      "https://us-central1-reactnative-f82c6.cloudfunctions.net/HAR?name=" +
+        firebase.auth().currentUser.uid.toString() +
+        ".txt"
     );
     htmlString = await response.text();
     console.log(htmlString);
-    Speech.speak(parseFloat(htmlString) * 100 + " percent dancing");
+    Speech.speak(Math.round(parseFloat(htmlString) * 100) + " percent dancing");
+    this.setState({ danceScore: htmlString });
   }
 
   async performCloudFunct() {
@@ -86,7 +94,7 @@ export class AtEvent extends React.Component {
     await mountainsRef.put(blob).then(function(snapshot) {
       console.log("Uploaded a blob!");
     });
-    this.getTheML();
+    await this.getTheML();
   }
 
   componentWillUnmount() {
@@ -103,7 +111,7 @@ export class AtEvent extends React.Component {
 
   _subscribe = () => {
     this._subscription = Accelerometer.addListener(accelerometerData => {
-      if (bigCounter < 5) {
+      if (this.state.songChange == false) {
         if (counter < 80) {
           var temp = [
             [accelerometerData.x * 9.81],
@@ -114,17 +122,14 @@ export class AtEvent extends React.Component {
           counter = counter + 1;
         } else {
           theBigOne.push(accelerometerDatas);
-          bigCounter = bigCounter + 1;
           counter = 0;
           accelerometerDatas = [];
-          console.log(bigCounter);
-          Speech.speak(bigCounter.toString());
         }
       } else {
-        data = JSON.stringify(theBigOne);
-        console.log(data);
-        this.performCloudFunct();
-        this._toggle();
+        theBigOne = [];
+        counter = 0;
+        accelerometerDatas = [];
+        this.setState({ songChange: false });
       }
     });
   };
@@ -135,22 +140,24 @@ export class AtEvent extends React.Component {
   };
 
   //Every time the attendance state of an event changes
-  onEventChange() {
+  async onEventChange() {
     const db = firebase.firestore();
 
     db.collection("event")
       .doc(this.props.route.params.eventId)
       .onSnapshot(
-        querySnapshot => {
+        async querySnapshot => {
           if (
             querySnapshot.data().nextSong > 1 &&
             querySnapshot.data().previousSongId != this.state.lastUpdatedSong
           ) {
-            Toast.show("Dance scores sent!");
             this.setState({
               lastUpdatedSong: querySnapshot.data().previousSongId
             });
-            const decrement = firebase.firestore.FieldValue.increment(-1);
+            data = JSON.stringify(theBigOne);
+            await this.performCloudFunct();
+            Toast.show("Dance scores sent!");
+
             //Add the users score to the database
             db.collection("userSong")
               .doc(
@@ -162,9 +169,9 @@ export class AtEvent extends React.Component {
                 userId: firebase.auth().currentUser.uid,
                 eventId: this.props.route.params.eventId,
                 songId: querySnapshot.data().previousSongId,
-                danceScore: 0.5
+                danceScore: this.state.danceScore
               });
-
+            const decrement = firebase.firestore.FieldValue.increment(-1);
             //Next song -1
             db.collection("event")
               .doc(this.props.route.params.eventId)

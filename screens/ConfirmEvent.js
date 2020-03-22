@@ -51,7 +51,16 @@ export class CreateEvent extends React.Component {
         <Text>
           Type of event: {this.state.type === 0 ? "Private" : "Public"}
         </Text>
-        <View style={{ flex: 1, width: 300, maxHeight: 300 }}>
+        <View
+          style={{
+            flex: 1,
+            width: 300,
+            maxHeight: 300,
+            borderRadius: 15,
+            overflow: "hidden",
+            elevation: 5
+          }}
+        >
           <MapView
             style={styles.map}
             region={{
