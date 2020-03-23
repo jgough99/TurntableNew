@@ -42,7 +42,7 @@ export default class CustomHeader extends Component {
         }
         centerComponent={{
           text: this.props.title,
-          style: { color: "black", fontSize: 25, fontFamily: "Rubik-Regular" }
+          style: { color: "black", fontSize: 25, fontFamily: "Rubik-Medium" }
         }}
       />
     );
