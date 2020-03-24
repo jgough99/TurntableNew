@@ -17,6 +17,7 @@ import similarity from "compute-cosine-similarity";
 import * as Constants from "../Constants";
 import { Slider } from "react-native-elements";
 import Toast from "react-native-tiny-toast";
+var danceScore;
 
 export default class PlaylistScreen extends React.Component {
   state = {
@@ -25,7 +26,9 @@ export default class PlaylistScreen extends React.Component {
     songsArray: [],
     attendees: [],
     timer: 0,
-    currentSongIndex: 0
+    currentSongIndex: 0,
+    danceScoresAverage: [],
+    adjustmentValues: [0, 0, 0, 0]
   };
 
   async componentDidMount() {
@@ -88,8 +91,66 @@ export default class PlaylistScreen extends React.Component {
       );
   }
 
+  //Get the dance scores from the database
+  async getDanceScore() {
+    const db = firebase.firestore();
+
+    db.collection("userSong")
+      .where("eventId", "==", this.props.eventId.toString())
+      .where(
+        "songId",
+        "==",
+        this.state.playlist[this.state.currentSongIndex - 1][1].id.toString()
+      )
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+          return null;
+        }
+        var danceScoreAverage = 0.0;
+        var i = 0;
+        snapshot.forEach(doc => {
+          console.log("Found a score");
+          danceScoreAverage = danceScoreAverage + parseFloat(doc.danceScore);
+          i = i + 1;
+        });
+        return danceScoreAverage / i;
+      });
+  }
+  //Calculate the adjustment values
+  async calculateFeedbackAdjustment() {
+    console.log("Calculating feedback adjustment");
+    const db = firebase.firestore();
+    var danceScoreAverage = 0.0;
+
+    await db
+      .collection("userSong")
+      .where("eventId", "==", this.props.eventId.toString())
+      .where(
+        "songId",
+        "==",
+        this.state.playlist[this.state.currentSongIndex - 1][1].id.toString()
+      )
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          console.log("No matching documents.");
+        }
+        var i = 0;
+        snapshot.forEach(doc => {
+          console.log("Found a score");
+          danceScoreAverage =
+            danceScoreAverage + parseFloat(doc.data().danceScore);
+          i = i + 1;
+        });
+        danceScoreAverage = danceScoreAverage / i;
+        console.log("Average dance score:: " + danceScoreAverage);
+      });
+  }
+
   //Every time the attendance state of an event changes
-  onEventChange() {
+  async onEventChange() {
     const db = firebase.firestore();
 
     db.collection("event")
@@ -101,6 +162,8 @@ export default class PlaylistScreen extends React.Component {
           }
           if (querySnapshot.data().nextSong === 1) {
             Toast.show("Dance scores are in!");
+
+            this.calculateFeedbackAdjustment();
 
             this.playlistUpdate();
 
