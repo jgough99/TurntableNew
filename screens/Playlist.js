@@ -28,7 +28,7 @@ export default class PlaylistScreen extends React.Component {
     timer: 0,
     currentSongIndex: 0,
     danceScoresAverage: [],
-    adjustmentValues: [0, 0, 0, 0]
+    adjustmentValues: [0, 0, 0, 0, 0]
   };
 
   async componentDidMount() {
@@ -91,33 +91,6 @@ export default class PlaylistScreen extends React.Component {
       );
   }
 
-  //Get the dance scores from the database
-  async getDanceScore() {
-    const db = firebase.firestore();
-
-    db.collection("userSong")
-      .where("eventId", "==", this.props.eventId.toString())
-      .where(
-        "songId",
-        "==",
-        this.state.playlist[this.state.currentSongIndex - 1][1].id.toString()
-      )
-      .get()
-      .then(snapshot => {
-        if (snapshot.empty) {
-          console.log("No matching documents.");
-          return null;
-        }
-        var danceScoreAverage = 0.0;
-        var i = 0;
-        snapshot.forEach(doc => {
-          console.log("Found a score");
-          danceScoreAverage = danceScoreAverage + parseFloat(doc.danceScore);
-          i = i + 1;
-        });
-        return danceScoreAverage / i;
-      });
-  }
   //Calculate the adjustment values
   async calculateFeedbackAdjustment() {
     console.log("Calculating feedback adjustment");
@@ -145,7 +118,39 @@ export default class PlaylistScreen extends React.Component {
           i = i + 1;
         });
         danceScoreAverage = danceScoreAverage / i;
-        console.log("Average dance score:: " + danceScoreAverage);
+        this.state.danceScoresAverage.push(danceScoreAverage);
+        var lastSong = this.state.playlist[this.state.currentSongIndex - 1][1]
+          .data;
+        var lastSongValues = [
+          lastSong.electro,
+          lastSong.hiphop,
+          lastSong.house,
+          lastSong.pop,
+          lastSong.rock
+        ];
+        var sum = lastSongValues.reduce(
+          (previous, current) => (current += previous)
+        );
+        var songAvg = sum / lastSongValues.length;
+        var sum = this.state.danceScoresAverage.reduce(
+          (previous, current) => (current += previous)
+        );
+        var danceAvg = sum / this.state.danceScoresAverage.length;
+        var tempAdjustment = [
+          (lastSong.electro - songAvg) * (danceScoreAverage - danceAvg) * 5,
+          (lastSong.hiphop - songAvg) * (danceScoreAverage - danceAvg) * 5,
+          (lastSong.house - songAvg) * (danceScoreAverage - danceAvg) * 5,
+          (lastSong.pop - songAvg) * (danceScoreAverage - danceAvg) * 5,
+          (lastSong.rock - songAvg) * (danceScoreAverage - danceAvg) * 5
+        ];
+
+        for (var i = 0; i < tempAdjustment.length; ++i) {
+          this.state.adjustmentValues[i] =
+            this.state.adjustmentValues[i] + tempAdjustment[i];
+        }
+        this.playlistUpdate();
+
+        console.log(tempAdjustment);
       });
   }
 
@@ -164,8 +169,6 @@ export default class PlaylistScreen extends React.Component {
             Toast.show("Dance scores are in!");
 
             this.calculateFeedbackAdjustment();
-
-            this.playlistUpdate();
 
             db.collection("event")
               .doc(this.props.eventId)
@@ -238,6 +241,13 @@ export default class PlaylistScreen extends React.Component {
         house = house / totalNumberOfAttendees;
         pop = pop / totalNumberOfAttendees;
 
+        var userPrefs = [rock, hiphop, electro, house, pop];
+        console.log("Before prefs: " + userPrefs);
+        for (var i = 0; i < userPrefs.length; ++i) {
+          userPrefs[i] = this.state.adjustmentValues[i] + userPrefs[i];
+        }
+        console.log("After prefs: " + userPrefs);
+
         var songsArrayLength = previousPlaylistEnd.length;
         for (var i = 0; i < songsArrayLength; i++) {
           var data = previousPlaylistEnd[i][1];
@@ -250,7 +260,7 @@ export default class PlaylistScreen extends React.Component {
                 data.data.house,
                 data.data.pop
               ],
-              [rock, hiphop, electro, house, pop]
+              userPrefs
             ),
             data
           ]);
