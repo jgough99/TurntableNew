@@ -69,8 +69,8 @@ export class Profile extends React.Component {
               justifyContent: "center",
               borderRadius: 15,
               padding: 15,
-              transform: [{ rotate: "-90deg" }],
-              minWidth: "70%",
+              //transform: [{ rotate: "-90deg" }],
+              minWidth: "85%",
               borderColor: "white",
               elevation: 5
             }}
@@ -88,21 +88,52 @@ export class Profile extends React.Component {
               <ActivityIndicator color={Constants.colors.primary} />
             )}
           </View>
-          <View style={{ flex: 1, justifyContent: "center" }}>
+          <View
+            style={{
+              flex: 0.7,
+              flexDirection: "row",
+              justifyContent: "center",
+              backgroundColor: "white",
+              borderRadius: 15,
+              elevation: 5,
+              width: "85%"
+            }}
+          >
+            <View
+              style={{
+                flex: 0.7,
+                flexDirection: "row",
+                justifyContent: "center",
+                backgroundColor: "white",
+                borderRadius: 15,
+                elevation: 5,
+                width: "85%"
+              }}
+            ></View>
+            <View
+              style={{
+                flex: 0.7,
+                flexDirection: "row",
+                justifyContent: "center",
+                backgroundColor: "white",
+                borderRadius: 15,
+                elevation: 5,
+                width: "85%"
+              }}
+            ></View>
+          </View>
+          <View
+            style={{
+              flex: 0.3,
+              justifyContent: "center",
+              backgroundColor: "white",
+              borderRadius: 15,
+              elevation: 5,
+              width: "85%"
+            }}
+          >
             <Button
-              style={{ marginVertical: 10 }}
-              title="Sign out"
-              onPress={() => this.signOutMethod()}
-            />
-
-            <Button
-              style={{ marginTop: 10 }}
-              title="Create Event"
-              onPress={() => this.props.navigation.navigate("CreateEvent")}
-            />
-
-            <Button
-              style={{ marginVertical: 10 }}
+              style={{ width: "95%" }}
               title="Go to my events"
               onPress={() => this.props.navigation.navigate("MyEventsList")}
             />
