@@ -1,11 +1,39 @@
 import * as React from "react";
-import { Text, View, Image, ActivityIndicator } from "react-native";
+import { Text, View, Image, ActivityIndicator, StyleSheet } from "react-native";
 import { Header, Card, Button, Slider } from "react-native-elements";
 import { useTheme } from "@react-navigation/native";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Constants from "../Constants";
+
+const styles = StyleSheet.create({
+  triangleUp: {
+    maxWidth: "1%",
+    maxHeight: "1%",
+    backgroundColor: "transparent",
+    borderStyle: "solid",
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 10,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "green"
+  },
+  triangleDown: {
+    maxWidth: "1%",
+    maxHeight: "1%",
+    backgroundColor: "transparent",
+    borderStyle: "solid",
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 10,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "red",
+    transform: [{ rotate: "-180deg" }]
+  }
+});
 
 export default class PlaylistItem extends React.Component {
   constructor(props) {
@@ -50,10 +78,10 @@ export default class PlaylistItem extends React.Component {
 
   drawShape(positionChange) {
     if (positionChange === "u") {
-      return <Text>u</Text>;
+      return <View style={[styles.triangleUp]} />;
     }
     if (positionChange === "d") {
-      return <Text>d</Text>;
+      return <View style={[styles.triangleDown]} />;
     } else {
       return <Text>-</Text>;
     }
