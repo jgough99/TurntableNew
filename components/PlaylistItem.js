@@ -48,6 +48,17 @@ export default class PlaylistItem extends React.Component {
     }
   }
 
+  drawShape(positionChange) {
+    if (positionChange === "u") {
+      return <Text>u</Text>;
+    }
+    if (positionChange === "d") {
+      return <Text>d</Text>;
+    } else {
+      return <Text>-</Text>;
+    }
+  }
+
   render() {
     return (
       <View
@@ -102,7 +113,7 @@ export default class PlaylistItem extends React.Component {
               fontFamily: "Rubik-Regular"
             }}
           >
-            <Text>-</Text>
+            {this.drawShape(this.props.indexChange)}
           </View>
 
           {/* Title/Artist */}

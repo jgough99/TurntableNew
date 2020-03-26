@@ -22,6 +22,7 @@ var danceScore;
 export default class PlaylistScreen extends React.Component {
   state = {
     playlist: [],
+    previousPlaylist: [],
     loading: true,
     songsArray: [],
     attendees: [],
@@ -109,48 +110,54 @@ export default class PlaylistScreen extends React.Component {
       .then(snapshot => {
         if (snapshot.empty) {
           console.log("No matching documents.");
-        }
-        var i = 0;
-        snapshot.forEach(doc => {
-          console.log("Found a score");
-          danceScoreAverage =
-            danceScoreAverage + parseFloat(doc.data().danceScore);
-          i = i + 1;
-        });
-        danceScoreAverage = danceScoreAverage / i;
-        this.state.danceScoresAverage.push(danceScoreAverage);
-        var lastSong = this.state.playlist[this.state.currentSongIndex - 1][1]
-          .data;
-        var lastSongValues = [
-          lastSong.electro,
-          lastSong.hiphop,
-          lastSong.house,
-          lastSong.pop,
-          lastSong.rock
-        ];
-        var sum = lastSongValues.reduce(
-          (previous, current) => (current += previous)
-        );
-        var songAvg = sum / lastSongValues.length;
-        var sum = this.state.danceScoresAverage.reduce(
-          (previous, current) => (current += previous)
-        );
-        var danceAvg = sum / this.state.danceScoresAverage.length;
-        var tempAdjustment = [
-          (lastSong.electro - songAvg) * (danceScoreAverage - danceAvg) * 5,
-          (lastSong.hiphop - songAvg) * (danceScoreAverage - danceAvg) * 5,
-          (lastSong.house - songAvg) * (danceScoreAverage - danceAvg) * 5,
-          (lastSong.pop - songAvg) * (danceScoreAverage - danceAvg) * 5,
-          (lastSong.rock - songAvg) * (danceScoreAverage - danceAvg) * 5
-        ];
+        } else {
+          var i = 0;
+          snapshot.forEach(doc => {
+            console.log("Found a score");
+            danceScoreAverage =
+              danceScoreAverage + parseFloat(doc.data().danceScore);
+            i = i + 1;
+          });
+          danceScoreAverage = danceScoreAverage / i;
+          console.log("Dance score average: " + danceScoreAverage);
+          this.state.danceScoresAverage.push(danceScoreAverage);
+          var lastSong = this.state.playlist[this.state.currentSongIndex - 1][1]
+            .data;
+          var lastSongValues = [
+            lastSong.electro,
+            lastSong.hiphop,
+            lastSong.house,
+            lastSong.pop,
+            lastSong.rock
+          ];
+          var sum = lastSongValues.reduce(
+            (previous, current) => (current += previous)
+          );
+          var songAvg = sum / lastSongValues.length;
+          console.log("Average song values: " + songAvg);
 
-        for (var i = 0; i < tempAdjustment.length; ++i) {
-          this.state.adjustmentValues[i] =
-            this.state.adjustmentValues[i] + tempAdjustment[i];
-        }
-        this.playlistUpdate();
+          var sum = this.state.danceScoresAverage.reduce(
+            (previous, current) => (current += previous)
+          );
+          var danceAvg = sum / this.state.danceScoresAverage.length;
+          console.log("Total dance score average: " + danceAvg);
 
-        console.log(tempAdjustment);
+          var tempAdjustment = [
+            (lastSong.electro - songAvg) * (danceScoreAverage - danceAvg) * 5,
+            (lastSong.hiphop - songAvg) * (danceScoreAverage - danceAvg) * 5,
+            (lastSong.house - songAvg) * (danceScoreAverage - danceAvg) * 5,
+            (lastSong.pop - songAvg) * (danceScoreAverage - danceAvg) * 5,
+            (lastSong.rock - songAvg) * (danceScoreAverage - danceAvg) * 5
+          ];
+
+          for (var i = 0; i < tempAdjustment.length; ++i) {
+            this.state.adjustmentValues[i] =
+              this.state.adjustmentValues[i] + tempAdjustment[i];
+          }
+          this.playlistUpdate();
+
+          console.log(tempAdjustment);
+        }
       });
   }
 
@@ -199,6 +206,7 @@ export default class PlaylistScreen extends React.Component {
       .doc(firebase.auth().currentUser.uid)
       .get()
       .then(snapshot => {
+        this.setState({ previousPlaylist: this.state.playlist });
         userPreferences = snapshot.data();
         var attendeesArrayLength = this.state.attendees.length;
         var rock = userPreferences.rock;
@@ -346,6 +354,22 @@ export default class PlaylistScreen extends React.Component {
       );
   }
 
+  //See if the items position is higher or lower
+  indexChange(index) {
+    var songItem = this.state.playlist[index];
+    var i = this.state.previousPlaylist.findIndex(
+      x => x[1].data.title === songItem[1].data.title
+    );
+    if (index < i) {
+      return "u";
+    }
+    if (index > i) {
+      return "d";
+    } else {
+      return "-";
+    }
+  }
+
   render() {
     if (this.state.loading == false) {
       return (
@@ -434,6 +458,7 @@ export default class PlaylistScreen extends React.Component {
                 artist={song[1].data.artist}
                 jsonSong={song[1]}
                 timer={this.currentSongTimer(index)}
+                indexChange={this.indexChange(index)}
               />
             ))}
           </ScrollView>
