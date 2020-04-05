@@ -14,7 +14,7 @@ export default function Timeline() {
           fadeDuration={0}
           style={{
             width: Constants.windowWidth * 0.9,
-            height: Constants.windowWidth * 0.9,
+            height: Constants.windowWidth * 0.6,
           }}
         />
         <Text

@@ -9,7 +9,7 @@ import Toast from "react-native-tiny-toast";
 import * as Speech from "expo-speech";
 import { Accelerometer } from "expo-sensors";
 import functions from "@firebase/functions";
-
+import * as Constants from "../Constants";
 var firebaseConfig = {
   apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
   authDomain: "reactnative-f82c6.firebaseapp.com",
@@ -18,7 +18,7 @@ var firebaseConfig = {
   storageBucket: "reactnative-f82c6.appspot.com",
   messagingSenderId: "382800399674",
   appId: "1:382800399674:web:d83dc73f6fef1498851403",
-  measurementId: "G-W29WJ4DWPY"
+  measurementId: "G-W29WJ4DWPY",
 };
 
 if (!firebase.apps.length) {
@@ -42,7 +42,7 @@ export class AtEvent extends React.Component {
     loading: true,
     lastUpdatedSong: "",
     songChange: false,
-    danceScore: ""
+    danceScore: "",
   };
 
   componentDidMount() {
@@ -58,7 +58,7 @@ export class AtEvent extends React.Component {
     db.collection("event")
       .doc(this.state.codeValue.toString())
       .get()
-      .then(doc => {
+      .then((doc) => {
         this.setState({ title: doc.data().title });
         this.setState({ loading: false });
 
@@ -67,10 +67,10 @@ export class AtEvent extends React.Component {
           .set({
             userId: firebase.auth().currentUser.uid,
             eventId: doc.id,
-            active: true
+            active: true,
           });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
         this.setState({ loading: false });
       });
@@ -91,7 +91,7 @@ export class AtEvent extends React.Component {
 
   async performCloudFunct() {
     var blob = new Blob([data], { type: "application/json" });
-    await mountainsRef.put(blob).then(function(snapshot) {
+    await mountainsRef.put(blob).then(function (snapshot) {
       console.log("Uploaded a blob!");
     });
     await this.getTheML();
@@ -110,13 +110,13 @@ export class AtEvent extends React.Component {
   };
 
   _subscribe = () => {
-    this._subscription = Accelerometer.addListener(accelerometerData => {
+    this._subscription = Accelerometer.addListener((accelerometerData) => {
       if (this.state.songChange == false) {
         if (counter < 80) {
           var temp = [
             [accelerometerData.x * 9.81],
             [accelerometerData.y * 9.81],
-            [accelerometerData.z * 9.81]
+            [accelerometerData.z * 9.81],
           ];
           accelerometerDatas.push(temp);
           counter = counter + 1;
@@ -146,13 +146,13 @@ export class AtEvent extends React.Component {
     db.collection("event")
       .doc(this.props.route.params.eventId)
       .onSnapshot(
-        async querySnapshot => {
+        async (querySnapshot) => {
           if (
             querySnapshot.data().nextSong > 1 &&
             querySnapshot.data().previousSongId != this.state.lastUpdatedSong
           ) {
             this.setState({
-              lastUpdatedSong: querySnapshot.data().previousSongId
+              lastUpdatedSong: querySnapshot.data().previousSongId,
             });
             data = JSON.stringify(theBigOne);
             await this.performCloudFunct();
@@ -169,7 +169,7 @@ export class AtEvent extends React.Component {
                 userId: firebase.auth().currentUser.uid,
                 eventId: this.props.route.params.eventId,
                 songId: querySnapshot.data().previousSongId,
-                danceScore: this.state.danceScore
+                danceScore: this.state.danceScore,
               });
             const decrement = firebase.firestore.FieldValue.increment(-1);
             //Next song -1
@@ -178,7 +178,7 @@ export class AtEvent extends React.Component {
               .update({ nextSong: decrement });
           }
         },
-        err => {
+        (err) => {
           console.log(`Encountered error: ${err}`);
         }
       );
@@ -191,7 +191,7 @@ export class AtEvent extends React.Component {
       .set({
         eventId: this.state.codeValue,
         userId: firebase.auth().currentUser.uid,
-        active: false
+        active: false,
       });
     navigation.navigate("Profile");
   }
@@ -205,17 +205,38 @@ export class AtEvent extends React.Component {
           style={{
             flex: 1,
             justifyContent: "flex-start",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <CustomHeader title={this.state.title} />
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Text> You are at an event called:{this.state.title}</Text>
-            <Text> Last updated song:{this.state.lastUpdatedSong}</Text>
+            <Image
+              source={require("../assets/dancing.png")}
+              fadeDuration={0}
+              style={{
+                width: Constants.windowWidth * 0.9,
+                height: Constants.windowWidth * 0.9,
+              }}
+            />
+
+            <Text
+              style={{
+                width: Constants.windowWidth * 0.6,
+                textAlign: "center",
+                marginTop: 10,
+                fontFamily: "Rubik-Regular",
+                fontSize: 15,
+              }}
+            >
+              Dance around to show your love for songs playing!
+            </Text>
             <Button
-              title="BACK"
+              title="LEAVE EVENT"
+              type="clear"
+              containerStyle={{ marginTop: 30 }}
+              titleStyle={{ color: Constants.colors.primary }}
               onPress={() => this.exitEvent(this.props.navigation)}
             />
           </View>
