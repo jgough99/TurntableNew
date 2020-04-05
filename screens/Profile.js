@@ -7,7 +7,7 @@ import firestore from "@firebase/firestore";
 import { StackActions } from "@react-navigation/native";
 import { NavigationEvents } from "react-navigation";
 import { withNavigation } from "react-navigation";
-import BarChart from "../components/BarChart";
+import BarChart from "../components/BarChartNew";
 import * as Constants from "../Constants";
 
 export class Profile extends React.Component {
@@ -59,7 +59,9 @@ export class Profile extends React.Component {
           style={{
             flex: 1,
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
+            alignSelf: "center",
+            width: "90%"
           }}
         >
           <View
@@ -69,10 +71,11 @@ export class Profile extends React.Component {
               justifyContent: "center",
               borderRadius: 15,
               padding: 15,
-              //transform: [{ rotate: "-90deg" }],
-              minWidth: "85%",
+              minWidth: "100%",
               borderColor: "white",
-              elevation: 5
+              borderWidth: 1,
+              marginTop: 15,
+              borderColor: "#CDCBCB"
             }}
           >
             {!this.state.prefsLoading && (
@@ -88,37 +91,47 @@ export class Profile extends React.Component {
               <ActivityIndicator color={Constants.colors.primary} />
             )}
           </View>
+          <View style={{ alignSelf: "flex-start" }}>
+            <Button
+              type="clear"
+              title="IMPROVE ACCURACY"
+              onPress={() => this.props.navigation.navigate("MyEventsList")}
+              titleStyle={{ color: Constants.colors.secondary }}
+            />
+          </View>
+
           <View
             style={{
               flex: 0.7,
               flexDirection: "row",
               justifyContent: "center",
-              backgroundColor: "white",
-              borderRadius: 15,
-              elevation: 5,
-              width: "85%"
+              width: "100%"
             }}
           >
             <View
               style={{
-                flex: 0.7,
+                flex: 1,
                 flexDirection: "row",
                 justifyContent: "center",
                 backgroundColor: "white",
                 borderRadius: 15,
-                elevation: 5,
-                width: "85%"
+                borderWidth: 1,
+                borderColor: "#CDCBCB",
+                width: "100%",
+                marginRight: 7
               }}
             ></View>
             <View
               style={{
-                flex: 0.7,
+                flex: 1,
                 flexDirection: "row",
                 justifyContent: "center",
                 backgroundColor: "white",
                 borderRadius: 15,
-                elevation: 5,
-                width: "85%"
+                borderWidth: 1,
+                borderColor: "#CDCBCB",
+                width: "100%",
+                marginLeft: 7
               }}
             ></View>
           </View>
@@ -128,8 +141,10 @@ export class Profile extends React.Component {
               justifyContent: "center",
               backgroundColor: "white",
               borderRadius: 15,
-              elevation: 5,
-              width: "85%"
+              borderWidth: 1,
+              borderColor: "#CDCBCB",
+              width: "100%",
+              margin: 15
             }}
           >
             <Button
