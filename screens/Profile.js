@@ -20,7 +20,7 @@ export class Profile extends React.Component {
       house: "",
       hipHop: "",
       electro: "",
-      prefsLoading: true
+      prefsLoading: true,
     };
   }
   signOutMethod() {
@@ -38,7 +38,7 @@ export class Profile extends React.Component {
     db.collection("user")
       .doc(firebase.auth().currentUser.uid)
       .get()
-      .then(doc => {
+      .then((doc) => {
         this.setState({ rock: doc.data().rock });
         this.setState({ pop: doc.data().pop });
         this.setState({ house: doc.data().house });
@@ -46,7 +46,7 @@ export class Profile extends React.Component {
         this.setState({ electro: doc.data().electro });
         this.setState({ prefsLoading: false });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
       });
   };
@@ -61,7 +61,7 @@ export class Profile extends React.Component {
             justifyContent: "center",
             alignItems: "center",
             alignSelf: "center",
-            width: "90%"
+            width: "90%",
           }}
         >
           <View
@@ -73,9 +73,9 @@ export class Profile extends React.Component {
               padding: 15,
               minWidth: "100%",
               borderColor: "white",
-              borderWidth: 1,
+              //4borderWidth: 1,
               marginTop: 15,
-              borderColor: "#CDCBCB"
+              borderColor: "#CDCBCB",
             }}
           >
             {!this.state.prefsLoading && (
@@ -105,7 +105,7 @@ export class Profile extends React.Component {
               flex: 0.7,
               flexDirection: "row",
               justifyContent: "center",
-              width: "100%"
+              width: "100%",
             }}
           >
             <View
@@ -118,7 +118,7 @@ export class Profile extends React.Component {
                 borderWidth: 1,
                 borderColor: "#CDCBCB",
                 width: "100%",
-                marginRight: 7
+                marginRight: 7,
               }}
             ></View>
             <View
@@ -131,7 +131,7 @@ export class Profile extends React.Component {
                 borderWidth: 1,
                 borderColor: "#CDCBCB",
                 width: "100%",
-                marginLeft: 7
+                marginLeft: 7,
               }}
             ></View>
           </View>
@@ -144,7 +144,7 @@ export class Profile extends React.Component {
               borderWidth: 1,
               borderColor: "#CDCBCB",
               width: "100%",
-              margin: 15
+              margin: 15,
             }}
           >
             <Button
