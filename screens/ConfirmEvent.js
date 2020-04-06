@@ -12,6 +12,8 @@ import CustomHeader from "../components/Header";
 import * as Constants from "../Constants";
 
 Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
+var ref = null;
+var url = null;
 
 export class CreateEvent extends React.Component {
   state = {
@@ -19,7 +21,7 @@ export class CreateEvent extends React.Component {
     lng: -3.943685,
     date: new Date(),
     type: 0,
-    eventName: ""
+    eventName: "",
   };
 
   confirm(navigation) {
@@ -31,12 +33,14 @@ export class CreateEvent extends React.Component {
       startTime: firebase.firestore.Timestamp.fromDate(this.state.date),
       userId: firebase.auth().currentUser.uid,
       playlist: [],
-      nextSong: 0
+      nextSong: 0,
     });
     navigation.navigate("Home");
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    ref = firebase.storage().ref("images/test-image");
+    url = await ref.getDownloadURL();
     this.setState({ lat: this.props.route.params.lat });
     this.setState({ lng: this.props.route.params.lng });
     this.setState({ eventName: this.props.route.params.name });
@@ -54,14 +58,14 @@ export class CreateEvent extends React.Component {
             flex: 0.75,
             justifyContent: "center",
             alignSelf: "center",
-            width: "90%"
+            width: "90%",
           }}
         >
           <Text
             style={{
               fontFamily: "Rubik-Regular",
               fontSize: 25,
-              marginLeft: 10
+              marginLeft: 10,
             }}
           >
             Is this right?
@@ -75,12 +79,12 @@ export class CreateEvent extends React.Component {
               overflow: "hidden",
               width: "90%",
               borderWidth: 1,
-              borderColor: "grey"
+              borderColor: "grey",
             }}
           >
             <View style={{ flex: 2 }}>
               <Image
-                source={require("../assets/club.jpg")}
+                source={{ uri: url }}
                 style={{ width: "100%", height: "100%" }}
               />
             </View>
@@ -88,14 +92,14 @@ export class CreateEvent extends React.Component {
               style={{
                 flex: 1,
 
-                justifyContent: "center"
+                justifyContent: "center",
               }}
             >
               <Text
                 style={{
                   fontFamily: "Rubik-Regular",
                   fontSize: 25,
-                  marginLeft: 10
+                  marginLeft: 10,
                 }}
               >
                 {this.state.eventName}
@@ -105,7 +109,7 @@ export class CreateEvent extends React.Component {
                   fontFamily: "Rubik-Regular",
                   fontSize: 20,
                   marginLeft: 10,
-                  color: "grey"
+                  color: "grey",
                 }}
               >
                 {this.state.type === 0 ? "Private" : "Public"} Event
@@ -115,7 +119,7 @@ export class CreateEvent extends React.Component {
                   marginTop: 5,
                   flex: 0.5,
                   flexDirection: "row",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 <Text
@@ -123,7 +127,7 @@ export class CreateEvent extends React.Component {
                     fontFamily: "Rubik-Regular",
                     fontSize: 15,
                     marginLeft: 10,
-                    color: "grey"
+                    color: "grey",
                   }}
                 >
                   {this.state.date.getDate() +
@@ -137,7 +141,7 @@ export class CreateEvent extends React.Component {
                     fontFamily: "Rubik-Regular",
                     fontSize: 15,
                     marginLeft: 25,
-                    color: "grey"
+                    color: "grey",
                   }}
                 >
                   {this.state.date.toTimeString().slice(0, 5)}
@@ -152,13 +156,13 @@ export class CreateEvent extends React.Component {
                   latitude: this.state.lat,
                   longitude: this.state.lng,
                   latitudeDelta: 0.003,
-                  longitudeDelta: 0.003
+                  longitudeDelta: 0.003,
                 }}
               >
                 <Marker
                   coordinate={{
                     latitude: this.state.lat,
-                    longitude: this.state.lng
+                    longitude: this.state.lng,
                   }}
                   title={"Club Y"}
                 >
@@ -176,7 +180,7 @@ export class CreateEvent extends React.Component {
             flex: 1,
 
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
         >
           <Button
@@ -185,7 +189,7 @@ export class CreateEvent extends React.Component {
               backgroundColor: Constants.colors.primary,
               borderRadius: 15,
               height: 60,
-              elevation: 5
+              elevation: 5,
             }}
             title="Confirm"
             onPress={() => this.confirm(this.props.navigation)}
@@ -200,12 +204,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    marginTop: 30
+    marginTop: 30,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 15
-  }
+    borderRadius: 15,
+  },
 });
 
 export default withNavigation(CreateEvent);

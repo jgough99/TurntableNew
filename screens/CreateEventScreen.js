@@ -9,6 +9,10 @@ import { withNavigation } from "react-navigation";
 import * as Constants from "../Constants";
 import CustomHeader from "../components/Header";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import * as Permissions from "expo-permissions";
+import * as firebase from "firebase";
+import firestore from "@firebase/firestore";
 
 Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
 
@@ -22,12 +26,24 @@ export class CreateEvent extends React.Component {
     mode: "date",
     show: false,
     buttonState: 0,
-    eventName: ""
+    eventName: "",
+    image: null,
+  };
+
+  uploadImage = async (uri, imageName) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("images/" + imageName);
+    return ref.put(blob);
   };
 
   findTheCoords() {
     Geocoder.from(this.state.postcode + this.state.placeName + "UK")
-      .then(json => {
+      .then((json) => {
         this.setState({ lat: json.results[0].geometry.location.lat });
         this.setState({ lng: json.results[0].geometry.location.lng });
         console.log(this.state.lat);
@@ -37,10 +53,10 @@ export class CreateEvent extends React.Component {
           lat: this.state.lat,
           lng: this.state.lng,
           date: this.state.date,
-          type: this.state.buttonState
+          type: this.state.buttonState,
         });
       })
-      .catch(error => console.warn(error));
+      .catch((error) => console.warn(error));
   }
 
   onChange = (event, selectedDate) => {
@@ -49,11 +65,11 @@ export class CreateEvent extends React.Component {
     this.setState({ date: currentDate });
   };
 
-  updateIndex = selectedIndex => {
+  updateIndex = (selectedIndex) => {
     this.setState({ buttonState: selectedIndex });
   };
 
-  showMode = currentMode => {
+  showMode = (currentMode) => {
     this.setState({ show: true });
     this.setState({ mode: currentMode });
   };
@@ -66,7 +82,39 @@ export class CreateEvent extends React.Component {
     this.showMode("time");
   };
 
+  componentDidMount() {
+    this.getPermissionAsync();
+    console.log("hi");
+  }
+
+  getPermissionAsync = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      }
+    }
+  };
+
+  _pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+      this.uploadImage(result.uri, "test-image");
+    }
+  };
+
   render() {
+    let { image } = this.state;
+
     return (
       <View style={{ flex: 1 }}>
         <CustomHeader title="Create Event" navigation={this.props.navigation} />
@@ -76,7 +124,7 @@ export class CreateEvent extends React.Component {
               flex: 1,
 
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             {/* Name of event input */}
@@ -86,10 +134,10 @@ export class CreateEvent extends React.Component {
               inputContainerStyle={{
                 borderColor: "#CDCBCB",
                 bottomBorderWidth: 1,
-                height: "90%"
+                height: "90%",
               }}
               inputStyle={{ fontSize: 24, fontFamily: "Rubik-Regular" }}
-              onChangeText={eventName => this.setState({ eventName })}
+              onChangeText={(eventName) => this.setState({ eventName })}
               autoCapitalize="none"
               autoCorrect={false}
             />
@@ -99,7 +147,7 @@ export class CreateEvent extends React.Component {
               flex: 1,
 
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             {/* Upload event image button */}
@@ -109,7 +157,7 @@ export class CreateEvent extends React.Component {
                 backgroundColor: Constants.colors.primary,
                 borderRadius: 15,
                 height: 60,
-                elevation: 5
+                elevation: 5,
               }}
               icon={
                 <MaterialCommunityIcons
@@ -119,6 +167,7 @@ export class CreateEvent extends React.Component {
                 />
               }
               title="UPLOAD EVENT IMAGE"
+              onPress={this._pickImage}
             />
           </View>
 
@@ -127,7 +176,7 @@ export class CreateEvent extends React.Component {
               flex: 1,
 
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
             {/* Date and time buttons */}
@@ -136,12 +185,12 @@ export class CreateEvent extends React.Component {
                 flex: 1,
                 alignItems: "center",
                 flexDirection: "row",
-                width: "85%"
+                width: "85%",
               }}
             >
               <View
                 style={{
-                  flex: 1
+                  flex: 1,
                 }}
               >
                 <Button
@@ -152,7 +201,7 @@ export class CreateEvent extends React.Component {
                     height: 60,
                     width: "95%",
                     borderColor: "#CDCBCB",
-                    borderWidth: 1
+                    borderWidth: 1,
                   }}
                   onPress={this.showDatepicker}
                   title={
@@ -183,7 +232,7 @@ export class CreateEvent extends React.Component {
                     height: 60,
                     width: "95%",
                     borderColor: "#CDCBCB",
-                    borderWidth: 1
+                    borderWidth: 1,
                   }}
                 />
               </View>
@@ -208,7 +257,7 @@ export class CreateEvent extends React.Component {
               flex: 1,
 
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <ButtonGroup
@@ -216,10 +265,10 @@ export class CreateEvent extends React.Component {
               containerStyle={{
                 width: "85%",
                 borderRadius: 15,
-                height: 60
+                height: 60,
               }}
               selectedButtonStyle={{
-                backgroundColor: Constants.colors.primary
+                backgroundColor: Constants.colors.primary,
               }}
               onPress={this.updateIndex}
               selectedIndex={this.state.buttonState}
@@ -235,7 +284,7 @@ export class CreateEvent extends React.Component {
                     flex: 1,
 
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
                   <Input
@@ -245,10 +294,10 @@ export class CreateEvent extends React.Component {
                       borderColor: "#CDCBCB",
                       borderWidth: 1,
                       borderRadius: 15,
-                      height: 60
+                      height: 60,
                     }}
                     inputStyle={{ marginLeft: 15 }}
-                    onChangeText={placeName => this.setState({ placeName })}
+                    onChangeText={(placeName) => this.setState({ placeName })}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
@@ -258,7 +307,7 @@ export class CreateEvent extends React.Component {
                     flex: 1,
 
                     justifyContent: "center",
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                 >
                   <Input
@@ -268,10 +317,10 @@ export class CreateEvent extends React.Component {
                       borderColor: "#CDCBCB",
                       borderWidth: 1,
                       borderRadius: 15,
-                      height: 60
+                      height: 60,
                     }}
                     inputStyle={{ marginLeft: 15 }}
-                    onChangeText={postcode => this.setState({ postcode })}
+                    onChangeText={(postcode) => this.setState({ postcode })}
                     autoCapitalize="none"
                     autoCorrect={false}
                   />
@@ -285,7 +334,7 @@ export class CreateEvent extends React.Component {
               flex: 2,
 
               alignItems: "center",
-              justifyContent: "flex-end"
+              justifyContent: "flex-end",
             }}
           >
             <Button
@@ -294,7 +343,7 @@ export class CreateEvent extends React.Component {
                 backgroundColor: Constants.colors.primary,
                 borderRadius: 15,
                 height: 60,
-                elevation: 5
+                elevation: 5,
               }}
               title="Create"
               onPress={() => this.findTheCoords()}
@@ -310,12 +359,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    marginTop: 30
+    marginTop: 30,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: 15
-  }
+    borderRadius: 15,
+  },
 });
 
 export default withNavigation(CreateEvent);
