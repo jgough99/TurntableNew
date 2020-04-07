@@ -5,7 +5,7 @@ import {
   View,
   Image,
   Button,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
@@ -17,17 +17,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   map: {
-    ...StyleSheet.absoluteFillObject
-  }
+    ...StyleSheet.absoluteFillObject,
+  },
 });
 
 export default class MapScreen extends React.Component {
   state = {
     markers: [],
-    loading: true
+    loading: true,
   };
 
   componentDidMount() {
@@ -36,25 +36,25 @@ export default class MapScreen extends React.Component {
     db.collection("event")
       .where("type", "==", "Public")
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         if (snapshot.empty) {
           console.log("No matching documents.");
           this.setState({ loading: false });
           return;
         }
         var i = 0;
-        snapshot.forEach(doc => {
+        snapshot.forEach((doc) => {
           this.state.markers.push({
             id: i,
             location: doc.data().location,
             title: doc.data().title,
-            startTime: doc.data().startTime
+            startTime: doc.data().startTime,
           });
           i++;
         });
         this.setState({ loading: false });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
       });
   }
@@ -68,16 +68,16 @@ export default class MapScreen extends React.Component {
             latitude: 51.620685,
             longitude: -3.943685,
             latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+            longitudeDelta: 0.0421,
           }}
         >
           {console.log(this.state.markers)}
-          {this.state.markers.map(marker => (
+          {this.state.markers.map((marker) => (
             <Marker
               key={marker.id}
               coordinate={{
                 latitude: marker.location.U,
-                longitude: marker.location.k
+                longitude: marker.location.k,
               }}
               title={marker.title}
               description={marker.startTime.toDate().toDateString()}
@@ -98,7 +98,7 @@ export default class MapScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: "flex-start" }}>
-        <CustomHeader title="Club Finder" />
+        <CustomHeader title="Event Finder" />
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
