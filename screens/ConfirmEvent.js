@@ -39,7 +39,13 @@ export class CreateEvent extends React.Component {
   }
 
   async componentDidMount() {
-    ref = firebase.storage().ref("images/test-image");
+    ref = firebase
+      .storage()
+      .ref(
+        "images/" +
+          firebase.auth().currentUser.uid.toString() +
+          this.props.route.params.name
+      );
     url = await ref.getDownloadURL();
     this.setState({ lat: this.props.route.params.lat });
     this.setState({ lng: this.props.route.params.lng });

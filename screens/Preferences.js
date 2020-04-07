@@ -7,7 +7,7 @@ import { withNavigation } from "react-navigation";
 import firestore from "@firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PreferenceSlider from "../components/PreferenceSlider";
-
+import * as Constants from "../Constants";
 export class Preferences extends React.Component {
   state = { value: 0.5 };
 
@@ -20,22 +20,20 @@ export class Preferences extends React.Component {
       storageBucket: "reactnative-f82c6.appspot.com",
       messagingSenderId: "382800399674",
       appId: "1:382800399674:web:d83dc73f6fef1498851403",
-      measurementId: "G-W29WJ4DWPY"
+      measurementId: "G-W29WJ4DWPY",
     };
 
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.firestore();
-    db.collection("user")
-      .doc(firebase.auth().currentUser.uid)
-      .set({
-        rock: this.rock.current.getValue(),
-        pop: this.pop.current.getValue(),
-        electro: this.electro.current.getValue(),
-        hipHop: this.hipHop.current.getValue(),
-        house: this.house.current.getValue()
-      });
+    db.collection("user").doc(firebase.auth().currentUser.uid).set({
+      rock: this.rock.current.getValue(),
+      pop: this.pop.current.getValue(),
+      electro: this.electro.current.getValue(),
+      hipHop: this.hipHop.current.getValue(),
+      house: this.house.current.getValue(),
+    });
     navigation.navigate("Home");
   }
 
@@ -54,14 +52,14 @@ export class Preferences extends React.Component {
             alignItems: "center",
             justifyContent: "center",
             width: "90%",
-            marginTop: 30
+            marginTop: 30,
           }}
         >
           <Text
             style={{
               fontSize: 30,
               fontWeight: "bold",
-              alignSelf: "flex-start"
+              alignSelf: "flex-start",
             }}
           >
             Tell us about your music taste.
@@ -78,10 +76,10 @@ export class Preferences extends React.Component {
         <Button
           containerStyle={{ width: "80%", marginBottom: 30 }}
           buttonStyle={{
-            backgroundColor: "#EC6338",
+            backgroundColor: Constants.colors.primary,
             borderRadius: 15,
             height: 60,
-            elevation: 5
+            elevation: 5,
           }}
           title="Lets Go!"
           onPress={() => this.arrayOfValues(this.props.navigation)}

@@ -30,7 +30,7 @@ export default class PreferenceSlider extends React.Component {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
         >
           <MaterialCommunityIcons name="thumb-down" color="#737272" size={40} />
@@ -43,14 +43,14 @@ export default class PreferenceSlider extends React.Component {
                 borderColor: "#CDCBCB",
                 borderWidth: 1,
                 width: 40,
-                height: 40
+                height: 40,
               }}
               value={this.state.value}
               trackStyle={{ height: 6 }}
-              minimumTrackTintColor={"#EC6338"}
+              minimumTrackTintColor={Constants.colors.primary}
               maximumTrackTintColor={"#CDCBCB"}
-              onValueChange={value => this.setState({ value })}
-              onSlidingComplete={value => {
+              onValueChange={(value) => this.setState({ value })}
+              onSlidingComplete={(value) => {
                 this.setState({ changed: true });
               }}
             />

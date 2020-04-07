@@ -54,6 +54,8 @@ export class CreateEvent extends React.Component {
           lng: this.state.lng,
           date: this.state.date,
           type: this.state.buttonState,
+          image:
+            firebase.auth().currentUser.uid.toString + this.state.eventName,
         });
       })
       .catch((error) => console.warn(error));
@@ -108,7 +110,10 @@ export class CreateEvent extends React.Component {
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
-      this.uploadImage(result.uri, "test-image");
+      this.uploadImage(
+        result.uri,
+        firebase.auth().currentUser.uid.toString() + this.state.eventName
+      );
     }
   };
 
