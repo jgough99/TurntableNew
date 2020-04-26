@@ -12,6 +12,8 @@ import firestore from "@firebase/firestore";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import CustomHeader from "../components/Header";
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,9 +30,43 @@ export default class MapScreen extends React.Component {
   state = {
     markers: [],
     loading: true,
+    mapRegion: null,
+    hasLocationPermissions: false,
+    locationResult: null,
   };
 
+  handleMapRegionChange(mapRegion) {
+    console.log(mapRegion);
+    this.setState({ mapRegion });
+  }
+
+  async getLocationAsync() {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== "granted") {
+      this.setState({
+        locationResult: "Permission to access location was denied",
+      });
+    } else {
+      this.setState({ hasLocationPermissions: true });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    this.setState({ locationResult: location });
+
+    // Center the map on the location we just fetched.
+    this.setState({
+      mapRegion: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      },
+    });
+  }
+
   componentDidMount() {
+    this.getLocationAsync();
+
     const db = firebase.firestore();
 
     db.collection("event")
@@ -65,8 +101,8 @@ export default class MapScreen extends React.Component {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: 51.620685,
-            longitude: -3.943685,
+            latitude: this.state.locationResult.coords.latitude,
+            longitude: this.state.locationResult.coords.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
@@ -102,7 +138,7 @@ export default class MapScreen extends React.Component {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          {this.renderMap()}
+          {this.state.locationResult && this.renderMap()}
         </View>
       </View>
     );
