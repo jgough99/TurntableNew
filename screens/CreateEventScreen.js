@@ -13,9 +13,10 @@ import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
 import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
+import InputScrollView from "react-native-input-scroll-view";
 
 Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
-
+const boxHeight = Constants.windowHeight * 0.08;
 export class CreateEvent extends React.Component {
   state = {
     lat: 51.620685,
@@ -121,241 +122,256 @@ export class CreateEvent extends React.Component {
     let { image } = this.state;
 
     return (
-      <View style={{ flex: 1 }}>
-        <CustomHeader title="Create Event" navigation={this.props.navigation} />
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flex: 1,
+      <InputScrollView
+        topOffset={10}
+        style={{ flex: 1 }}
+        useAnimatedScrollView={true}
+      >
+        <View
+          style={{
+            flex: 1,
 
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {/* Name of event input */}
-            <Input
-              placeholder="Name of event"
-              containerStyle={{ width: "85%", marginVertical: 10 }}
-              inputContainerStyle={{
-                borderColor: "#CDCBCB",
-                bottomBorderWidth: 1,
-                height: "90%",
-              }}
-              inputStyle={{ fontSize: 24, fontFamily: "Rubik-Regular" }}
-              onChangeText={(eventName) => this.setState({ eventName })}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-          <View
-            style={{
-              flex: 1,
-
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {/* Upload event image button */}
-            <Button
-              containerStyle={{ width: "85%" }}
-              buttonStyle={{
-                backgroundColor: Constants.colors.primary,
-                borderRadius: 15,
-                height: 60,
-                elevation: 5,
-              }}
-              icon={
-                <MaterialCommunityIcons
-                  name="cloud-upload"
-                  color="white"
-                  size={25}
-                />
-              }
-              title="UPLOAD EVENT IMAGE"
-              onPress={this._pickImage}
-            />
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {/* Date and time buttons */}
+            height: Constants.windowHeight * 0.97,
+          }}
+        >
+          <CustomHeader
+            title="Create Event"
+            navigation={this.props.navigation}
+          />
+          <View style={{ flex: 1 }}>
             <View
               style={{
                 flex: 1,
+
+                justifyContent: "center",
                 alignItems: "center",
-                flexDirection: "row",
-                width: "85%",
               }}
             >
+              {/* Name of event input */}
+              <Input
+                placeholder="Name of event"
+                containerStyle={{ width: "85%", marginVertical: 10 }}
+                inputContainerStyle={{
+                  borderColor: "#CDCBCB",
+                  bottomBorderWidth: 1,
+                  height: "90%",
+                }}
+                inputStyle={{ fontSize: 24, fontFamily: "Rubik-Regular" }}
+                onChangeText={(eventName) => this.setState({ eventName })}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+            <View
+              style={{
+                flex: 1,
+
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {/* Upload event image button */}
+              <Button
+                containerStyle={{ width: "85%" }}
+                buttonStyle={{
+                  backgroundColor: Constants.colors.primary,
+                  borderRadius: 15,
+                  height: boxHeight,
+                  elevation: 5,
+                }}
+                icon={
+                  <MaterialCommunityIcons
+                    name="cloud-upload"
+                    color="white"
+                    size={25}
+                  />
+                }
+                title="UPLOAD EVENT IMAGE"
+                onPress={this._pickImage}
+              />
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {/* Date and time buttons */}
               <View
                 style={{
                   flex: 1,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  width: "85%",
                 }}
               >
-                <Button
-                  buttonStyle={{
-                    alignSelf: "flex-start",
-                    backgroundColor: "white",
-                    borderRadius: 15,
-                    height: 60,
-                    width: "95%",
-                    borderColor: "#CDCBCB",
-                    borderWidth: 1,
+                <View
+                  style={{
+                    flex: 1,
                   }}
-                  onPress={this.showDatepicker}
-                  title={
-                    this.state.date.getDate().toString() +
-                    "/" +
-                    (this.state.date.getMonth() + 1).toString() +
-                    "/" +
-                    this.state.date.getFullYear().toString() +
-                    "  "
-                  }
-                  titleStyle={{ color: "grey" }}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Button
-                  onPress={this.showTimepicker}
-                  title={
-                    this.state.date.getHours().toString() +
-                    ":" +
-                    this.state.date.getMinutes().toString() +
-                    " "
-                  }
-                  titleStyle={{ color: "grey" }}
-                  buttonStyle={{
-                    alignSelf: "flex-end",
-                    backgroundColor: "white",
-                    borderRadius: 15,
-                    height: 60,
-                    width: "95%",
-                    borderColor: "#CDCBCB",
-                    borderWidth: 1,
-                  }}
-                />
+                >
+                  <Button
+                    buttonStyle={{
+                      alignSelf: "flex-start",
+                      backgroundColor: "white",
+                      borderRadius: 15,
+                      height: boxHeight,
+                      width: "95%",
+                      borderColor: "#CDCBCB",
+                      borderWidth: 1,
+                    }}
+                    onPress={this.showDatepicker}
+                    title={
+                      this.state.date.getDate().toString() +
+                      "/" +
+                      (this.state.date.getMonth() + 1).toString() +
+                      "/" +
+                      this.state.date.getFullYear().toString() +
+                      "  "
+                    }
+                    titleStyle={{ color: "grey" }}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Button
+                    onPress={this.showTimepicker}
+                    title={
+                      this.state.date.getHours().toString() +
+                      ":" +
+                      this.state.date.getMinutes().toString() +
+                      " "
+                    }
+                    titleStyle={{ color: "grey" }}
+                    buttonStyle={{
+                      alignSelf: "flex-end",
+                      backgroundColor: "white",
+                      borderRadius: 15,
+                      height: boxHeight,
+                      width: "95%",
+                      borderColor: "#CDCBCB",
+                      borderWidth: 1,
+                    }}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          {this.state.show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              timeZoneOffsetInMinutes={0}
-              value={this.state.date}
-              mode={this.state.mode}
-              minimumDate={new Date()}
-              is24Hour={true}
-              display="default"
-              onChange={this.onChange}
-            />
-          )}
-
-          {/* Public/Private buttons */}
-          <View
-            style={{
-              flex: 1,
-
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <ButtonGroup
-              buttons={["PRIVATE", "PUBLIC"]}
-              containerStyle={{
-                width: "85%",
-                borderRadius: 15,
-                height: 60,
-              }}
-              selectedButtonStyle={{
-                backgroundColor: Constants.colors.primary,
-              }}
-              onPress={this.updateIndex}
-              selectedIndex={this.state.buttonState}
-            />
-          </View>
-
-          {/* Address input */}
-          <View style={{ flex: 2 }}>
-            {this.state.buttonState == 1 && (
-              <View style={{ flex: 1 }}>
-                <View
-                  style={{
-                    flex: 1,
-
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Input
-                    placeholder="First line of address"
-                    containerStyle={{ width: "85%" }}
-                    inputContainerStyle={{
-                      borderColor: "#CDCBCB",
-                      borderWidth: 1,
-                      borderRadius: 15,
-                      height: 60,
-                    }}
-                    inputStyle={{ marginLeft: 15 }}
-                    onChangeText={(placeName) => this.setState({ placeName })}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                </View>
-                <View
-                  style={{
-                    flex: 1,
-
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Input
-                    placeholder="Postcode"
-                    containerStyle={{ width: "85%" }}
-                    inputContainerStyle={{
-                      borderColor: "#CDCBCB",
-                      borderWidth: 1,
-                      borderRadius: 15,
-                      height: 60,
-                    }}
-                    inputStyle={{ marginLeft: 15 }}
-                    onChangeText={(postcode) => this.setState({ postcode })}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                </View>
-              </View>
+            {this.state.show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                timeZoneOffsetInMinutes={0}
+                value={this.state.date}
+                mode={this.state.mode}
+                minimumDate={new Date()}
+                is24Hour={true}
+                display="default"
+                onChange={this.onChange}
+              />
             )}
-          </View>
 
-          <View
-            style={{
-              flex: 2,
+            {/* Public/Private buttons */}
+            <View
+              style={{
+                flex: 1,
 
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button
-              containerStyle={{ width: "80%", marginBottom: 30 }}
-              buttonStyle={{
-                backgroundColor: Constants.colors.primary,
-                borderRadius: 15,
-                height: 60,
-                elevation: 5,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-              title="Create"
-              onPress={() => this.findTheCoords()}
-            />
+            >
+              <ButtonGroup
+                buttons={["PRIVATE", "PUBLIC"]}
+                containerStyle={{
+                  width: "85%",
+                  borderRadius: 15,
+                  height: boxHeight,
+                }}
+                selectedButtonStyle={{
+                  backgroundColor: Constants.colors.primary,
+                }}
+                onPress={this.updateIndex}
+                selectedIndex={this.state.buttonState}
+              />
+            </View>
+
+            {/* Address input */}
+            <View style={{ flex: 2 }}>
+              {this.state.buttonState == 1 && (
+                <View style={{ flex: 1 }}>
+                  <View
+                    style={{
+                      flex: 1,
+
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Input
+                      placeholder="First line of address"
+                      containerStyle={{ width: "85%" }}
+                      inputContainerStyle={{
+                        borderColor: "#CDCBCB",
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        height: boxHeight,
+                      }}
+                      inputStyle={{ marginLeft: 15 }}
+                      onChangeText={(placeName) => this.setState({ placeName })}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Input
+                      placeholder="Postcode"
+                      containerStyle={{ width: "85%" }}
+                      inputContainerStyle={{
+                        borderColor: "#CDCBCB",
+                        borderWidth: 1,
+                        borderRadius: 15,
+                        height: boxHeight,
+                      }}
+                      inputStyle={{ marginLeft: 15 }}
+                      onChangeText={(postcode) => this.setState({ postcode })}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+
+            <View
+              style={{
+                flex: 2,
+
+                alignItems: "center",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                containerStyle={{ width: "80%", marginBottom: 30 }}
+                buttonStyle={{
+                  backgroundColor: Constants.colors.primary,
+                  borderRadius: 15,
+                  height: boxHeight,
+                  elevation: 5,
+                }}
+                title="Create"
+                onPress={() => this.findTheCoords()}
+              />
+            </View>
           </View>
         </View>
-      </View>
+      </InputScrollView>
     );
   }
 }

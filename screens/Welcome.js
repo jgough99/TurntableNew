@@ -18,16 +18,27 @@ export default function Welcome({ navigation }) {
         style={{ flex: 2, position: "absolute", width: "100%", height: "100%" }}
       >
         <View
-          style={{ flex: 2, alignItems: "center", justifyContent: "center" }}
+          style={{
+            flex: 3,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           <Image
             source={require("../assets/turntable_logo.png")}
             fadeDuration={0}
-            style={{ width: 200, height: 200 }}
+            style={{
+              width: Constants.windowWidth * 0.5,
+              height: Constants.windowWidth * 0.5,
+            }}
           />
         </View>
         <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "flex-end" }}
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}
         >
           <Text
             style={{
@@ -36,19 +47,11 @@ export default function Welcome({ navigation }) {
               textShadowRadius: 20,
               textAlign: "center",
               fontFamily: "Rubik-Regular",
-              marginBottom: 10
+              marginBottom: 10,
             }}
           >
             turntable.
           </Text>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "flex-start"
-          }}
-        >
           <Text
             style={{
               fontSize: 20,
@@ -56,12 +59,19 @@ export default function Welcome({ navigation }) {
               textShadowRadius: 20,
               textShadowColor: "rgba(0, 0, 0, 0.5)",
               textAlign: "center",
-              fontFamily: "Rubik-Regular"
+              fontFamily: "Rubik-Regular",
             }}
           >
             The tables have turned. {"\n"} Now you're in control.
           </Text>
         </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "flex-start",
+          }}
+        ></View>
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
@@ -71,7 +81,7 @@ export default function Welcome({ navigation }) {
               justifyContent: "center",
               alignItems: "center",
               width: "80%",
-              flex: 1
+              flex: 1,
             }}
           >
             <Button
@@ -80,7 +90,7 @@ export default function Welcome({ navigation }) {
                 backgroundColor: Constants.colors.primary,
                 borderRadius: 15,
                 height: 60,
-                elevation: 5
+                elevation: 5,
               }}
               title="LOGIN"
               onPress={() => navigation.navigate("Login")}
@@ -91,7 +101,7 @@ export default function Welcome({ navigation }) {
                 backgroundColor: Constants.colors.secondary,
                 borderRadius: 15,
                 height: 60,
-                elevation: 5
+                elevation: 5,
               }}
               title="REGISTER"
               onPress={() => navigation.navigate("Register")}

@@ -5229,6 +5229,13 @@ react-native-gesture-handler@~1.5.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-input-scroll-view@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/react-native-input-scroll-view/-/react-native-input-scroll-view-1.10.1.tgz#dcd7da4dcd0b36ed5542d216262ed2fe6129c58b"
+  integrity sha512-moGNrFnvOc6Vib8WZt1ACTZIztbku1nLDx5ijw3L5B5q9VIEjV+97Bzf1GbfNGQ0IaDI2THlBZQ/lDkBux8ALg==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-iphone-x-helper@1.2.1, react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
@@ -5241,6 +5248,11 @@ react-native-keyboard-aware-scroll-view@^0.9.1:
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
+
+react-native-keyboard-spacer@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.4.1.tgz#46f18a320432098a25ea9fa89f5143dd254d332d"
+  integrity sha1-RvGKMgQyCYol6p+on1FD3SVNMy0=
 
 react-native-maps@0.26.1:
   version "0.26.1"

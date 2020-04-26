@@ -27,7 +27,7 @@ export default class CustomHeader extends Component {
           style: "cancel",
         },
       ],
-      { cancelable: false }
+      { cancelable: true }
       //clicking out side of alert will not cancel
     );
   };
@@ -80,7 +80,9 @@ export default class CustomHeader extends Component {
                 />
               }
             >
-              <MenuItem onPress={this.hideMenu}>Sign Out</MenuItem>
+              <MenuItem onPress={this._twoOptionAlertHandler}>
+                Sign Out
+              </MenuItem>
             </Menu>
 
             {/* <MaterialCommunityIcons

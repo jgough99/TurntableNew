@@ -7,6 +7,9 @@ import firestore from "@firebase/firestore";
 import { StackActions } from "@react-navigation/native";
 import { NavigationEvents, ThemeColors } from "react-navigation";
 import * as Constants from "../Constants";
+
+const barHeight = Constants.windowHeight * 0.25;
+
 const styles = StyleSheet.create({
   text: {
     color: "white",
@@ -14,7 +17,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     width: 150,
     transform: [{ rotate: "-90deg" }],
-    marginBottom: 70
+    marginBottom: 70,
   },
   bar: {
     backgroundColor: Constants.colors.primary,
@@ -23,13 +26,13 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 50,
     borderTopLeftRadius: 50,
     flex: 1,
-    marginHorizontal: 3
+    marginHorizontal: 3,
   },
   number: {
     color: "white",
     fontFamily: "Rubik-Medium",
-    fontSize: 20
-  }
+    fontSize: 20,
+  },
 });
 
 export default class BarChart extends React.Component {
@@ -41,7 +44,7 @@ export default class BarChart extends React.Component {
       pop: "",
       house: "",
       hipHop: "",
-      electro: ""
+      electro: "",
     };
   }
 
@@ -52,13 +55,16 @@ export default class BarChart extends React.Component {
           flex: 1,
           justifyContent: "center",
           flexDirection: "row",
-          alignItems: "flex-end"
+          alignItems: "flex-end",
         }}
       >
         <View
           style={[
             styles.bar,
-            { height: 160 + this.props.rock, justifyContent: "flex-start" }
+            {
+              height: barHeight + this.props.rock / 2,
+              justifyContent: "flex-start",
+            },
           ]}
         >
           <View style={{ flex: 1, alignItems: "center" }}>
@@ -66,26 +72,32 @@ export default class BarChart extends React.Component {
           </View>
           <Text style={styles.text}>ROCK</Text>
         </View>
-        <View style={[styles.bar, { height: 160 + this.props.electro }]}>
+        <View
+          style={[styles.bar, { height: barHeight + this.props.electro / 2 }]}
+        >
           <View style={{ flex: 1, alignItems: "center" }}>
             <Text style={styles.number}>{this.props.electro}</Text>
           </View>
 
           <Text style={styles.text}>ELECTRO</Text>
         </View>
-        <View style={[styles.bar, { height: 160 + this.props.pop }]}>
+        <View style={[styles.bar, { height: barHeight + this.props.pop / 2 }]}>
           <View style={{ flex: 1, alignItems: "flex-end" }}>
             <Text style={styles.number}>{this.props.pop}</Text>
           </View>
           <Text style={styles.text}>POP</Text>
         </View>
-        <View style={[styles.bar, { height: 160 + this.props.hiphop }]}>
+        <View
+          style={[styles.bar, { height: barHeight + this.props.hiphop / 2 }]}
+        >
           <View style={{ flex: 1, alignItems: "flex-end" }}>
             <Text style={styles.number}>{this.props.hiphop}</Text>
           </View>
           <Text style={styles.text}>HIPHOP</Text>
         </View>
-        <View style={[styles.bar, { height: 160 + this.props.house }]}>
+        <View
+          style={[styles.bar, { height: barHeight + this.props.house / 2 }]}
+        >
           <View style={{ flex: 1, alignItems: "flex-end" }}>
             <Text style={styles.number}>{this.props.house}</Text>
           </View>
