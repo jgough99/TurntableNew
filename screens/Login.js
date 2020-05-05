@@ -24,20 +24,39 @@ export class LoginScreen extends React.Component {
     this.state = {
       email: "",
       password: "",
+      error: "",
     };
   }
 
   loginUser = (email, password, navigation) => {
-    try {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(function (user) {
-          navigation.navigate("Home");
-        });
-    } catch (error) {
-      console.log(error.toString());
-    }
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(function (user) {
+        navigation.navigate("Home");
+      })
+      .catch((error) => {
+        if (
+          error.message.toString() ==
+          "The password is invalid or the user does not have a password."
+        ) {
+          this.setState({
+            error: "Password is incorrect",
+          });
+        } else if (
+          error.message.toString() ==
+          "There is no user record corresponding to this identifier. The user may have been deleted."
+        ) {
+          this.setState({
+            error: "Email address not recognised",
+          });
+        } else {
+          console.log(error.message);
+          this.setState({
+            error: error.message,
+          });
+        }
+      });
   };
 
   render() {
@@ -72,6 +91,7 @@ export class LoginScreen extends React.Component {
                 }}
               />
             </View>
+
             <View style={{ flex: 0.8, alignItems: "center" }}>
               <Input
                 placeholder="Email"
@@ -111,7 +131,11 @@ export class LoginScreen extends React.Component {
                 autoCorrect={false}
                 secureTextEntry={true}
               />
+              <Text style={{ marginTop: 10, color: "red" }}>
+                {this.state.error}
+              </Text>
             </View>
+
             <View
               style={{
                 flex: 1.3,

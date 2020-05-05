@@ -27,25 +27,23 @@ export class RegisterScreen extends React.Component {
       email: "",
       password: "",
       confirm: "",
+      error: "",
     };
   }
 
   signUpUser = (email, password, confirm, navigation) => {
-    try {
-      if (password.length < 6) {
-        alert("Please enter more than 6 chars");
-      } else if (password != confirm) {
-        alert("Passwords dont match");
-      } else {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then(function (user) {
-            firebase.auth().signInWithEmailAndPassword(email, password);
-          });
-      }
-    } catch (error) {
-      console.log(error.toString());
+    if (password.length < 6) {
+      this.setState({ error: "Password must be more than 6 characters" });
+    } else if (password != confirm) {
+      this.setState({ error: "Password's do not match" });
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(function (user) {
+          firebase.auth().signInWithEmailAndPassword(email, password);
+        })
+        .catch((error) => this.setState({ error: error.message }));
     }
   };
 
@@ -139,6 +137,9 @@ export class RegisterScreen extends React.Component {
                 secureTextEntry={true}
                 onChangeText={(confirm) => this.setState({ confirm })}
               />
+              <Text style={{ marginTop: 10, color: "red" }}>
+                {this.state.error}
+              </Text>
             </View>
 
             <View

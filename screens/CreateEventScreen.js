@@ -19,8 +19,8 @@ Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
 const boxHeight = Constants.windowHeight * 0.08;
 export class CreateEvent extends React.Component {
   state = {
-    lat: 51.620685,
-    lng: -3.943685,
+    lat: null,
+    lng: null,
     placeName: "",
     postcode: "",
     date: new Date(),
@@ -49,15 +49,23 @@ export class CreateEvent extends React.Component {
         this.setState({ lng: json.results[0].geometry.location.lng });
         console.log(this.state.lat);
         console.log(this.state.lng);
-        this.props.navigation.navigate("ConfirmEvent", {
-          name: this.state.eventName,
-          lat: this.state.lat,
-          lng: this.state.lng,
-          date: this.state.date,
-          type: this.state.buttonState,
-          image:
-            firebase.auth().currentUser.uid.toString + this.state.eventName,
-        });
+        if (this.state.placeName == "" && this.state.postcode == "") {
+          console.log("No place entered ");
+        } else if (this.state.eventName == "") {
+          console.log("No event name entered ");
+        } else if (this.state.image == null) {
+          console.log("No image entered ");
+        } else {
+          this.props.navigation.navigate("ConfirmEvent", {
+            name: this.state.eventName,
+            lat: this.state.lat,
+            lng: this.state.lng,
+            date: this.state.date,
+            type: this.state.buttonState,
+            image:
+              firebase.auth().currentUser.uid.toString + this.state.eventName,
+          });
+        }
       })
       .catch((error) => console.warn(error));
   }
