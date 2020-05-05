@@ -208,7 +208,11 @@ export class AtEvent extends React.Component {
             alignItems: "center",
           }}
         >
-          <CustomHeader title={this.state.title} />
+          <CustomHeader
+            title={this.state.title}
+            left={"back"}
+            navigation={this.props.navigation}
+          />
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >

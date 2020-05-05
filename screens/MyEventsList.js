@@ -13,7 +13,7 @@ export class MyEventsList extends React.Component {
     super(props);
     this.state = {
       events: [],
-      loading: true
+      loading: true,
     };
   }
 
@@ -23,23 +23,23 @@ export class MyEventsList extends React.Component {
     db.collection("event")
       .where("userId", "==", firebase.auth().currentUser.uid.toString())
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         if (snapshot.empty) {
           console.log("No matching documents.");
           return;
         }
 
-        snapshot.forEach(doc => {
+        snapshot.forEach((doc) => {
           this.state.events.push({
             id: doc.id,
             title: doc.data().title,
-            startTime: doc.data().startTime
+            startTime: doc.data().startTime,
           });
         });
         this.setState({ loading: false });
       })
 
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
         this.setState({ loading: false });
       });
@@ -55,10 +55,10 @@ export class MyEventsList extends React.Component {
             flex: 1,
             justifyContent: "flex-start",
             alignItems: "center",
-            width: "100%"
+            width: "100%",
           }}
         >
-          {this.state.events.map(event => (
+          {this.state.events.map((event) => (
             <TouchableOpacity
               key={event.id}
               style={{ width: "100%" }}
@@ -71,7 +71,7 @@ export class MyEventsList extends React.Component {
                   elevation: 6,
                   borderRadius: 15,
                   overflow: "hidden",
-                  width: "90%"
+                  width: "90%",
                 }}
               >
                 <Text style={{ fontSize: 24 }}>{event.title}</Text>
@@ -91,7 +91,11 @@ export class MyEventsList extends React.Component {
       <View
         style={{ flex: 1, justifyContent: "flex-start", alignItems: "center" }}
       >
-        <CustomHeader title="My Events" />
+        <CustomHeader
+          title="My Events"
+          navigation={this.props.navigation}
+          left={"back"}
+        />
         {this.renderList()}
       </View>
     );

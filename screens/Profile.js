@@ -55,7 +55,11 @@ export class Profile extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <CustomHeader title="Profile" navigation={this.props.navigation} />
+        <CustomHeader
+          title="Profile"
+          navigation={this.props.navigation}
+          left={"logo"}
+        />
         <View
           style={{
             flex: 1,

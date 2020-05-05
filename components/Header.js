@@ -55,11 +55,23 @@ export default class CustomHeader extends Component {
           elevation: 1,
         }}
         leftComponent={
-          <Image
-            source={require("../assets/turntable_logo.png")}
-            fadeDuration={0}
-            style={{ width: 35, height: 35 }}
-          />
+          <View>
+            {this.props.left == "logo" && (
+              <Image
+                source={require("../assets/turntable_logo.png")}
+                fadeDuration={0}
+                style={{ width: 35, height: 35 }}
+              />
+            )}
+            {this.props.left == "back" && (
+              <MaterialCommunityIcons
+                name="arrow-left"
+                color={"grey"}
+                size={30}
+                onPress={() => this.props.navigation.goBack()}
+              />
+            )}
+          </View>
         }
         rightComponent={
           <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>

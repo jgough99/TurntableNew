@@ -57,7 +57,12 @@ export class CreateEvent extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <CustomHeader title="Create Event" navigation={this.props.navigation} />
+        <CustomHeader
+          title="Create Event"
+          navigation={this.props.navigation}
+          navigation={this.props.navigation}
+          left={"back"}
+        />
 
         <View
           style={{

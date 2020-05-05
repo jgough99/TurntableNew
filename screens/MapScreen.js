@@ -134,7 +134,11 @@ export default class MapScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: "flex-start" }}>
-        <CustomHeader title="Event Finder" />
+        <CustomHeader
+          title="Event Finder"
+          navigation={this.props.navigation}
+          left={"logo"}
+        />
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >

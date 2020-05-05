@@ -5,7 +5,7 @@ import {
   Image,
   Dimensions,
   SafeAreaView,
-  ScrollView
+  ScrollView,
 } from "react-native";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import CustomHeader from "../components/Header";
@@ -55,7 +55,7 @@ export class MyEvent extends React.Component {
     this.state = {
       title: "",
       eventId: this.props.route.params.eventId.toString(),
-      loading: true
+      loading: true,
     };
   }
 
@@ -65,11 +65,11 @@ export class MyEvent extends React.Component {
     db.collection("event")
       .doc(this.state.eventId.toString())
       .get()
-      .then(doc => {
+      .then((doc) => {
         this.setState({ title: doc.data().title });
         this.setState({ loading: false });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("Error getting documents", err);
         this.setState({ loading: false });
       });
@@ -91,8 +91,8 @@ export class MyEvent extends React.Component {
               style: { backgroundColor: "white", borderTopColor: "white" },
               indicatorStyle: {
                 backgroundColor: "#CA3C10",
-                height: 4
-              }
+                height: 4,
+              },
             }}
           >
             <Tab.Screen
@@ -119,7 +119,11 @@ export class MyEvent extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <CustomHeader title={this.state.title + " dashboard"} />
+        <CustomHeader
+          title={this.state.title + " dashboard"}
+          navigation={this.props.navigation}
+          left={"back"}
+        />
         {this.renderComponents()}
       </View>
     );

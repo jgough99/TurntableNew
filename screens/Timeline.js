@@ -56,7 +56,11 @@ export default class Timeline extends React.Component {
     if (this.state.noEvents == false) {
       return (
         <View style={{ flex: 1 }}>
-          <CustomHeader title="Timeline" />
+          <CustomHeader
+            title="Timeline"
+            left={"logo"}
+            navigation={this.props.navigation}
+          />
           <View style={{ flex: 1, alignItems: "center", minWidth: "100%" }}>
             {this.state.events.map((event, index) => (
               <TimelineCard eventId={event} />

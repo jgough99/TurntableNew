@@ -7,7 +7,11 @@ import BarcodeScannerScreen from "../components/Scanner";
 export default function ScannerScreen({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
-      <CustomHeader title="Scanner" />
+      <CustomHeader
+        title="Scanner"
+        left={"logo"}
+        navigation={this.props.navigation}
+      />
       <BarcodeScannerScreen nav={navigation} />
     </View>
   );
