@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Button,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import * as Permissions from "expo-permissions";
 import { useNavigation } from "@react-navigation/native";
@@ -17,22 +17,25 @@ import * as Constants from "../Constants";
 export default class BarcodeScannerScreen extends React.Component {
   state = {
     hasCameraPermission: null,
-    scanned: false
+    scanned: false,
   };
 
   constructor(props) {
     super(props);
   }
 
+  //On component load get the user permissions
   async componentDidMount() {
     this.getPermissionsAsync();
   }
 
+  //Function to get the permission from the user
   getPermissionsAsync = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === "granted" });
   };
 
+  //Render a camera view
   render() {
     const { hasCameraPermission, scanned } = this.state;
 
@@ -52,7 +55,7 @@ export default class BarcodeScannerScreen extends React.Component {
         style={{
           flex: 1,
           flexDirection: "column",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <BarCodeScanner
@@ -65,7 +68,7 @@ export default class BarcodeScannerScreen extends React.Component {
             flex: 1,
             position: "absolute",
             justifyContent: "center",
-            alignSelf: "center"
+            alignSelf: "center",
           }}
         >
           <Ionicons name="ios-qr-scanner" color="white" size={300} />
@@ -80,9 +83,10 @@ export default class BarcodeScannerScreen extends React.Component {
     );
   }
 
+  //When a barcode is scanned navigate to the event
   handleBarCodeScanned = ({ type, data }) => {
     this.setState({ scanned: true });
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    //alert(``);
     this.props.nav.navigate("atEvent", { eventId: data });
   };
 }

@@ -28,6 +28,7 @@ export class LoginScreen extends React.Component {
     };
   }
 
+  //Method to log the user into their account with error catching
   loginUser = (email, password, navigation) => {
     firebase
       .auth()

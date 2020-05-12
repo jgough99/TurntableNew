@@ -11,6 +11,7 @@ import * as Constants from "../Constants";
 export class Preferences extends React.Component {
   state = { value: 0.5 };
 
+  //Create an array of values and upload to the database from the sliders
   arrayOfValues(navigation) {
     var firebaseConfig = {
       apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",

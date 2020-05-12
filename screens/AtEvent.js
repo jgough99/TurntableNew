@@ -10,6 +10,8 @@ import * as Speech from "expo-speech";
 import { Accelerometer } from "expo-sensors";
 import functions from "@firebase/functions";
 import * as Constants from "../Constants";
+
+//Firebase configuration values for database connection
 var firebaseConfig = {
   apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
   authDomain: "reactnative-f82c6.firebaseapp.com",
@@ -21,15 +23,15 @@ var firebaseConfig = {
   measurementId: "G-W29WJ4DWPY",
 };
 
+//Initialise Firebase
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-var currentID = "";
 
+var currentID = "";
 var storageRef = firebase.storage().ref();
 var mountainsRef;
-
-var theBigOne = [];
+var mainAccData = [];
 var accelerometerDatas = [];
 var counter = 0;
 var data = "";
@@ -45,16 +47,20 @@ export class AtEvent extends React.Component {
     danceScore: "",
   };
 
+  //Upon the loading of the screen
   componentDidMount() {
     const db = firebase.firestore();
+
+    //If the user is logged in, get the current UserId and create a reference for the accelerometer text file
     if (firebase.auth()) {
       currentID = firebase.auth().currentUser.uid.toString();
       mountainsRef = storageRef.child(currentID + ".txt");
     }
+    //Toggle on accelerometer data
     this._toggle();
     Accelerometer.setUpdateInterval(50);
-    Speech.speak("Start Moving Now");
 
+    //Add attendance for the user and event
     db.collection("event")
       .doc(this.state.codeValue.toString())
       .get()
@@ -77,6 +83,7 @@ export class AtEvent extends React.Component {
     this.onEventChange();
   }
 
+  //Get the classification from cloud hosted neural network model
   async getTheML() {
     var response = await fetch(
       "https://us-central1-reactnative-f82c6.cloudfunctions.net/HAR?name=" +
@@ -85,10 +92,12 @@ export class AtEvent extends React.Component {
     );
     htmlString = await response.text();
     console.log(htmlString);
+    //Calclualte the dance score for the song
     Speech.speak(Math.round(parseFloat(htmlString) * 100) + " percent dancing");
     this.setState({ danceScore: htmlString });
   }
 
+  //Upload the accelerometer data as a text file to firebase storage
   async performCloudFunct() {
     var blob = new Blob([data], { type: "application/json" });
     await mountainsRef.put(blob).then(function (snapshot) {
@@ -97,10 +106,12 @@ export class AtEvent extends React.Component {
     await this.getTheML();
   }
 
+  //When the component unmounts unmount the accelerometer
   componentWillUnmount() {
     this._unsubscribe();
   }
 
+  //Toggle accelerometer
   _toggle = () => {
     if (this._subscription) {
       this._unsubscribe();
@@ -109,6 +120,7 @@ export class AtEvent extends React.Component {
     }
   };
 
+  //Subscribe the accelerometer
   _subscribe = () => {
     this._subscription = Accelerometer.addListener((accelerometerData) => {
       if (this.state.songChange == false) {
@@ -121,19 +133,19 @@ export class AtEvent extends React.Component {
           accelerometerDatas.push(temp);
           counter = counter + 1;
         } else {
-          theBigOne.push(accelerometerDatas);
+          mainAccData.push(accelerometerDatas);
           counter = 0;
           accelerometerDatas = [];
         }
       } else {
-        theBigOne = [];
+        mainAccData = [];
         counter = 0;
         accelerometerDatas = [];
         this.setState({ songChange: false });
       }
     });
   };
-
+  //Unsubscribe the accelerometer
   _unsubscribe = () => {
     this._subscription && this._subscription.remove();
     this._subscription = null;
@@ -154,7 +166,7 @@ export class AtEvent extends React.Component {
             this.setState({
               lastUpdatedSong: querySnapshot.data().previousSongId,
             });
-            data = JSON.stringify(theBigOne);
+            data = JSON.stringify(mainAccData);
             await this.performCloudFunct();
             Toast.show("Dance scores sent!");
 
@@ -184,6 +196,7 @@ export class AtEvent extends React.Component {
       );
   }
 
+  //When the event is exited navigate to the profile screen
   exitEvent(navigation) {
     const db = firebase.firestore();
     db.collection("attendance")

@@ -7,6 +7,7 @@ import firestore from "@firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Constants from "../Constants";
 
+//Styles for the playlist
 const styles = StyleSheet.create({
   triangleUp: {
     maxWidth: "1%",
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderBottomColor: "green"
+    borderBottomColor: "green",
   },
   triangleDown: {
     maxWidth: "1%",
@@ -31,8 +32,8 @@ const styles = StyleSheet.create({
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
     borderBottomColor: "red",
-    transform: [{ rotate: "-180deg" }]
-  }
+    transform: [{ rotate: "-180deg" }],
+  },
 });
 
 export default class PlaylistItem extends React.Component {
@@ -41,9 +42,10 @@ export default class PlaylistItem extends React.Component {
   }
   state = {
     topGenre: "",
-    secondGenre: ""
+    secondGenre: "",
   };
 
+  //Function to sort the genres to find the top two
   sortFunction(a, b) {
     if (a[0] === b[0]) {
       return 0;
@@ -52,15 +54,19 @@ export default class PlaylistItem extends React.Component {
     }
   }
 
+  //Upon mountint a playlist item
   componentDidMount() {
+    //Get the data for the song
     var song = this.props.jsonSong.data;
     var genresArray = [
       [song.rock, "ROCK"],
       [song.house, "HOUSE"],
       [song.pop, "POP"],
       [song.hiphop, "HIPHOP"],
-      [song.electro, "ELECTRO"]
+      [song.electro, "ELECTRO"],
     ];
+
+    //Order the genres and assign top two
     var sortedArray = genresArray.sort(this.sortFunction);
     var topGenre = sortedArray[0];
     var secondGenre = sortedArray[1];
@@ -68,6 +74,7 @@ export default class PlaylistItem extends React.Component {
     this.setState({ secondGenre: secondGenre[1] });
   }
 
+  //Funttion to get the background colour of the song item
   getBackround() {
     if (this.props.currentSong === true) {
       return Constants.colors.greyHighlight;
@@ -76,6 +83,7 @@ export default class PlaylistItem extends React.Component {
     }
   }
 
+  //Function to take draw the correct shape depending on position change
   drawShape(positionChange) {
     if (positionChange === "u") {
       return <View style={[styles.triangleUp]} />;
@@ -98,7 +106,7 @@ export default class PlaylistItem extends React.Component {
           borderBottomWidth: 1,
           borderColor: "#CDCBCB",
           width: Constants.windowWidth * 0.9,
-          backgroundColor: this.getBackround()
+          backgroundColor: this.getBackround(),
         }}
       >
         <View
@@ -106,7 +114,7 @@ export default class PlaylistItem extends React.Component {
             flex: 1,
             height: 70,
             flexDirection: "row",
-            width: Constants.windowWidth * 0.9
+            width: Constants.windowWidth * 0.9,
           }}
         >
           {/* Index */}
@@ -116,7 +124,7 @@ export default class PlaylistItem extends React.Component {
               height: "100%",
               justifyContent: "center",
               alignItems: "center",
-              fontFamily: "Rubik-Regular"
+              fontFamily: "Rubik-Regular",
             }}
           >
             {this.props.currentSong && (
@@ -138,7 +146,7 @@ export default class PlaylistItem extends React.Component {
               height: "100%",
               justifyContent: "center",
               alignItems: "center",
-              fontFamily: "Rubik-Regular"
+              fontFamily: "Rubik-Regular",
             }}
           >
             {this.drawShape(this.props.indexChange)}
@@ -150,7 +158,7 @@ export default class PlaylistItem extends React.Component {
               style={{
                 fontSize: 16,
                 fontFamily: "Rubik-Regular",
-                color: "#383838"
+                color: "#383838",
               }}
             >
               {this.props.title}
@@ -159,7 +167,7 @@ export default class PlaylistItem extends React.Component {
               style={{
                 fontSize: 13,
                 fontFamily: "Rubik-Regular",
-                color: "#8F8F8F"
+                color: "#8F8F8F",
               }}
             >
               {this.props.artist}
@@ -172,7 +180,7 @@ export default class PlaylistItem extends React.Component {
               flex: 2,
               height: "100%",
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Text
@@ -186,7 +194,7 @@ export default class PlaylistItem extends React.Component {
                 color: "white",
                 fontFamily: "Rubik-Medium",
                 fontSize: 12,
-                height: "40%"
+                height: "40%",
               }}
             >
               {this.state.topGenre}
@@ -203,7 +211,7 @@ export default class PlaylistItem extends React.Component {
                 fontFamily: "Rubik-Regular",
                 fontFamily: "Rubik-Medium",
                 fontSize: 12,
-                height: "40%"
+                height: "40%",
               }}
             >
               {this.state.secondGenre}
@@ -216,13 +224,13 @@ export default class PlaylistItem extends React.Component {
               alignItems: "center",
               width: "100%",
               height: 40,
-              backgroundColor: Constants.colors.greyHighlight
+              backgroundColor: Constants.colors.greyHighlight,
             }}
           >
             <Slider
               style={{ width: "70%" }}
               value={this.props.timer}
-              onValueChange={value => this.setState({ value })}
+              onValueChange={(value) => this.setState({ value })}
               thumbStyle={{ width: 0 }}
               maximumValue={(this.props.jsonSong.data.duration * 60) / 4}
               disabled={true}

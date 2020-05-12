@@ -35,11 +35,13 @@ export default class MapScreen extends React.Component {
     locationResult: null,
   };
 
+  //When the map region is changed, change the state
   handleMapRegionChange(mapRegion) {
     console.log(mapRegion);
     this.setState({ mapRegion });
   }
 
+  //Get the location permission
   async getLocationAsync() {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
@@ -64,11 +66,13 @@ export default class MapScreen extends React.Component {
     });
   }
 
+  //When the component mounts
   componentDidMount() {
     this.getLocationAsync();
 
     const db = firebase.firestore();
 
+    //Get the events which are public and display on the map
     db.collection("event")
       .where("type", "==", "Public")
       .get()

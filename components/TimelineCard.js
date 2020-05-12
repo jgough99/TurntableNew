@@ -1,4 +1,4 @@
-import { Card, Button } from "react-native-elements";
+import { Card, Button, Overlay } from "react-native-elements";
 import { Text, View, ActivityIndicator, Image } from "react-native";
 import React, { Component } from "react";
 import * as Constants from "../Constants";
@@ -13,12 +13,40 @@ export default class TimelineCard extends React.Component {
     type: "",
     image: "",
     loading: true,
+    visible: false,
+    songs: [],
+    songData: [],
   };
 
+  //On load, get the songs and event details for the timeline
   async componentDidMount() {
     await this.getEvent();
+    await this.getSongs();
   }
 
+  //Function to get the songs from firebase which were played while the user was at the event
+  async getSongs() {
+    const db = firebase.firestore();
+    db.collection("userSong")
+      .where("eventId", "==", this.props.eventId)
+      .where("userId", "==", firebase.auth().currentUser.uid.toString())
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          console.log("Song found");
+          this.state.songs.push(doc.data().songId);
+          this.getSongDetails(doc.data().songId);
+        });
+      });
+    this.setState({ loading: false });
+  }
+
+  //Toggle the overlay for the playlist
+  toggleOverlay = () => {
+    this.setState({ visible: !this.state.visible });
+  };
+
+  //Get the event details from the firebase database
   async getEvent() {
     const db = firebase.firestore();
     db.collection("event")
@@ -30,10 +58,22 @@ export default class TimelineCard extends React.Component {
         this.setState({ image: doc.data().userId + doc.data().title });
         ref = firebase.storage().ref("images/" + this.state.image);
         url = await ref.getDownloadURL();
-        this.setState({ loading: false });
       });
   }
 
+  //Get the details of a particular song in the playlist
+  getSongDetails(song) {
+    const db = firebase.firestore();
+    db.collection("song")
+      .doc(song)
+      .get()
+      .then(async (doc) => {
+        this.state.songData.push(doc.data());
+        console.log("hi");
+      });
+  }
+
+  //Render the contents of the card if loaded
   cardContents() {
     if (!this.state.loading) {
       return (
@@ -47,14 +87,27 @@ export default class TimelineCard extends React.Component {
 
           <Button
             containerStyle={{ alignSelf: "baseline" }}
+            onPress={this.toggleOverlay}
             type="clear"
-            title="DETAILS"
+            title="PLAYLIST"
             titleStyle={{
               color: Constants.colors.primary,
               fontSize: 12,
               marginLeft: 6,
             }}
           />
+          <Overlay
+            overlayStyle={{ borderRadius: 15 }}
+            isVisible={this.state.visible}
+            onBackdropPress={this.toggleOverlay}
+          >
+            <Text style={{ fontSize: 22 }}>Playlist{"\n"}</Text>
+            {this.state.songData.map((song, index) => (
+              <Text>
+                {index + 1}. {song.title}
+              </Text>
+            ))}
+          </Overlay>
         </View>
       );
     } else {

@@ -20,6 +20,7 @@ export default class StatisticsScreen extends React.Component {
     this.getAttendees();
   }
 
+  //Get the attendee data from the database and average the values
   async readUserData() {
     const db = firebase.firestore();
     this.setState({ rock: 0 });
@@ -50,6 +51,7 @@ export default class StatisticsScreen extends React.Component {
     this.setState({ loading: false });
   }
 
+  //Get the list of attendees from the database
   getAttendees() {
     const db = firebase.firestore();
     db.collection("attendance")
@@ -79,7 +81,11 @@ export default class StatisticsScreen extends React.Component {
     if (this.state.loading) {
       return (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Text>Loading</Text>
         </View>
@@ -87,20 +93,37 @@ export default class StatisticsScreen extends React.Component {
     } else {
       return (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+          }}
         >
           {!this.state.prefsLoading && (
-            <View style={{ flex: 1, minWidth: Constants.windowWidth * 0.9 }}>
-              <BarChart
-                rock={Math.round(this.state.rock * 100)}
-                electro={Math.round(this.state.electro * 100)}
-                pop={Math.round(this.state.pop * 100)}
-                house={Math.round(this.state.house * 100)}
-                hiphop={Math.round(this.state.hipHop * 100)}
-              />
-              <Text>Number of attendees: {this.state.attendees.length}</Text>
+            <View
+              style={{
+                flex: 1,
+                minWidth: Constants.windowWidth * 0.9,
+                justifyContent: "flex-start",
+              }}
+            >
+              <View>
+                <BarChartNew
+                  rock={Math.round(this.state.rock * 100)}
+                  electro={Math.round(this.state.electro * 100)}
+                  pop={Math.round(this.state.pop * 100)}
+                  house={Math.round(this.state.house * 100)}
+                  hiphop={Math.round(this.state.hipHop * 100)}
+                />
+              </View>
+
+              <Text style={{ marginTop: 15, fontFamily: "Rubik-Regular" }}>
+                Number of attendees: {this.state.attendees.length}
+              </Text>
             </View>
           )}
+
+          <View style={{ flex: 1.5 }}></View>
           {this.state.prefsLoading && (
             <ActivityIndicator color={Constants.colors.primary} />
           )}

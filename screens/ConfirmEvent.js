@@ -11,7 +11,8 @@ import firestore from "@firebase/firestore";
 import CustomHeader from "../components/Header";
 import * as Constants from "../Constants";
 
-Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
+//The api key for the google maps
+Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU");
 var ref = null;
 var url = null;
 
@@ -24,6 +25,7 @@ export class CreateEvent extends React.Component {
     eventName: "",
   };
 
+  //On confirm add the event to the database
   confirm(navigation) {
     const db = firebase.firestore();
     db.collection("event").add({
@@ -38,6 +40,7 @@ export class CreateEvent extends React.Component {
     navigation.navigate("Home");
   }
 
+  //When the component loads get the event details from the props
   async componentDidMount() {
     ref = firebase
       .storage()
@@ -226,57 +229,4 @@ const styles = StyleSheet.create({
 export default withNavigation(CreateEvent);
 
 {
-  /* <View style={styles.container}>
-<Text>Title: {this.state.eventName}</Text>
-<Text>Date: {this.state.date.toDateString()}</Text>
-<Text>Time: {this.state.date.toTimeString()}</Text>
-<Text>
-  Type of event: {this.state.type === 0 ? "Private" : "Public"}
-</Text>
-<View
-  style={{
-    flex: 1,
-    width: 300,
-    maxHeight: 300,
-    borderRadius: 15,
-    overflow: "hidden",
-    elevation: 5
-  }}
->
-  <MapView
-    style={styles.map}
-    region={{
-      latitude: this.state.lat,
-      longitude: this.state.lng,
-      latitudeDelta: 0.003,
-      longitudeDelta: 0.003
-    }}
-  >
-    <Marker
-      coordinate={{
-        latitude: this.state.lat,
-        longitude: this.state.lng
-      }}
-      title={"Club Y"}
-    >
-      <Image
-        source={require("../assets/turntable_logo.png")}
-        style={{ height: 35, width: 35 }}
-      />
-    </Marker>
-  </MapView>
-</View>
-
-<Button
-  containerStyle={{ width: "80%", marginBottom: 30 }}
-  buttonStyle={{
-    backgroundColor: "#EC6338",
-    borderRadius: 15,
-    height: 60,
-    elevation: 5
-  }}
-  title="Confirm"
-  onPress={() => this.confirm(this.props.navigation)}
-/>
-</View> */
 }

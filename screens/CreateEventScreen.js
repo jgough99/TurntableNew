@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import Geocoder from "react-native-geocoding";
-import { Button, Input, ButtonGroup } from "react-native-elements";
+import { Button, Input, ButtonGroup, colors } from "react-native-elements";
 import MapView from "react-native-maps";
 import { Marker } from "react-native-maps";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -15,8 +15,12 @@ import * as firebase from "firebase";
 import firestore from "@firebase/firestore";
 import InputScrollView from "react-native-input-scroll-view";
 
-Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU"); // use a valid API key
+//The api key for the google maps
+Geocoder.init("AIzaSyCFSuAtTl2BKMcs44dtOTWOL9QRWSc51VU");
+
+//Set the height for the box
 const boxHeight = Constants.windowHeight * 0.08;
+
 export class CreateEvent extends React.Component {
   state = {
     lat: null,
@@ -31,6 +35,7 @@ export class CreateEvent extends React.Component {
     image: null,
   };
 
+  //Upload the image for the event to Firestore
   uploadImage = async (uri, imageName) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -42,6 +47,7 @@ export class CreateEvent extends React.Component {
     return ref.put(blob);
   };
 
+  //Find the coordinates from the address entered and then navigate to the confirm event screen
   findTheCoords() {
     Geocoder.from(this.state.postcode + this.state.placeName + "UK")
       .then((json) => {
@@ -70,16 +76,19 @@ export class CreateEvent extends React.Component {
       .catch((error) => console.warn(error));
   }
 
+  //When the date is changed
   onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     this.setState({ show: Platform.OS === "ios" ? true : false });
     this.setState({ date: currentDate });
   };
 
+  //Set the date or time to the button text
   updateIndex = (selectedIndex) => {
     this.setState({ buttonState: selectedIndex });
   };
 
+  //Show the date or time chooser
   showMode = (currentMode) => {
     this.setState({ show: true });
     this.setState({ mode: currentMode });
@@ -92,12 +101,12 @@ export class CreateEvent extends React.Component {
   showTimepicker = () => {
     this.showMode("time");
   };
-
+  //When the compont mounts get the permission from the user to access galary
   componentDidMount() {
     this.getPermissionAsync();
-    console.log("hi");
   }
 
+  //Get the persmissions from the user
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -107,6 +116,7 @@ export class CreateEvent extends React.Component {
     }
   };
 
+  //Pick an image from the camera roll
   _pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -275,6 +285,7 @@ export class CreateEvent extends React.Component {
                 mode={this.state.mode}
                 minimumDate={new Date()}
                 is24Hour={true}
+                style={{ color: "red" }}
                 display="default"
                 onChange={this.onChange}
               />

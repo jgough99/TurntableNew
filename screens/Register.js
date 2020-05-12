@@ -30,7 +30,7 @@ export class RegisterScreen extends React.Component {
       error: "",
     };
   }
-
+  //Method to sign the user up for an account in the firebase database with validation
   signUpUser = (email, password, confirm, navigation) => {
     if (password.length < 6) {
       this.setState({ error: "Password must be more than 6 characters" });

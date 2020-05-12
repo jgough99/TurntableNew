@@ -17,9 +17,11 @@ export class MyEventsList extends React.Component {
     };
   }
 
+  //When the component mounts
   componentDidMount() {
     const db = firebase.firestore();
 
+    //Get all the events created by the current user
     db.collection("event")
       .where("userId", "==", firebase.auth().currentUser.uid.toString())
       .get()
@@ -45,6 +47,7 @@ export class MyEventsList extends React.Component {
       });
   }
 
+  //Render each event returned
   renderList() {
     if (this.state.loading) {
       return <Text>Loading</Text>;

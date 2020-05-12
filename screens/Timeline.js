@@ -7,7 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { Header, Card, Button } from "react-native-elements";
+import { Header, Card, Button, Overlay } from "react-native-elements";
 import CustomHeader from "../components/Header";
 import TimelineCard from "../components/TimelineCard";
 import * as Constants from "../Constants";
@@ -20,14 +20,17 @@ export default class Timeline extends React.Component {
     noEvents: null,
   };
 
+  //Upon loading get the list
   componentDidMount() {
     this.getEventList();
   }
 
+  //On screen focus run the component did mount again to refresh
   onScreenFocus = () => {
     this.componentDidMount();
   };
 
+  //Get all events from the database which the user has attended
   getEventList() {
     const db = firebase.firestore();
 
@@ -63,7 +66,7 @@ export default class Timeline extends React.Component {
           />
           <View style={{ flex: 1, alignItems: "center", minWidth: "100%" }}>
             {this.state.events.map((event, index) => (
-              <TimelineCard eventId={event} />
+              <TimelineCard key={index} eventId={event} />
             ))}
           </View>
         </View>

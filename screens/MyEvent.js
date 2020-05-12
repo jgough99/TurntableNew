@@ -17,6 +17,7 @@ import similarity from "compute-cosine-similarity";
 import PlaylistScreen from "./Playlist";
 import StatisticsScreen from "./Statistics";
 
+//Playlist component for tabbed naviagtion
 export function PlaylistComponent() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -25,6 +26,7 @@ export function PlaylistComponent() {
   );
 }
 
+//Stats component for tabbed naviagtion
 export function StatisticsComponent() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -33,6 +35,7 @@ export function StatisticsComponent() {
   );
 }
 
+//Barcode component for tabbed naviagtion
 export function CodeComponent() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -58,7 +61,7 @@ export class MyEvent extends React.Component {
       loading: true,
     };
   }
-
+  //When the component mounts get the event details
   componentDidMount() {
     const db = firebase.firestore();
 

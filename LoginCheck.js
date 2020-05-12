@@ -4,7 +4,7 @@ import {
   View,
   Image,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
 } from "react-native";
 import { Header, Card, Button } from "react-native-elements";
 import { useTheme } from "@react-navigation/native";
@@ -21,18 +21,17 @@ export class LoginCheck extends React.Component {
       loggedIn: null,
       loading: true,
       newUser: false,
-      fontLoaded: false
+      fontLoaded: false,
     };
   }
-
+  //Check if the user is new by using their music preference vals
   newUserCheck() {
-    //SOME SORT OF LOOP WHICH ONLY BREAKS WHEN THE CURRENT USERS DATABASE COPY HAS BEEN MADE
     const db = firebase.firestore();
 
     db.collection("user")
       .doc(firebase.auth().currentUser.uid)
       .get()
-      .then(doc => {
+      .then((doc) => {
         if (doc.data().rock > -1) {
           console.log("FIRST " + doc.data().rock);
           this.setState({ newUser: false });
@@ -46,15 +45,17 @@ export class LoginCheck extends React.Component {
           this.setState({ loading: false });
         }
       })
-      .catch(err => {
+      .catch((err) => {
         this.newUserCheck();
       });
   }
 
+  //get songs from storage
   async writeSongsArray(songsArray) {
     await AsyncStorage.setItem("songsArray2", JSON.stringify(songsArray));
   }
 
+  //When component loads
   async componentDidMount() {
     var firebaseConfig = {
       apiKey: "AIzaSyBIDYCkEOOxAsmdvIlgP4hhKqXx6yzAglU",
@@ -64,7 +65,7 @@ export class LoginCheck extends React.Component {
       storageBucket: "reactnative-f82c6.appspot.com",
       messagingSenderId: "382800399674",
       appId: "1:382800399674:web:d83dc73f6fef1498851403",
-      measurementId: "G-W29WJ4DWPY"
+      measurementId: "G-W29WJ4DWPY",
     };
 
     if (!firebase.apps.length) {
@@ -72,18 +73,18 @@ export class LoginCheck extends React.Component {
     }
 
     const db = firebase.firestore();
-    //GET THE SONGS
+    //Get the songs
     try {
       const value = await AsyncStorage.getItem("songsArray2");
       if (value !== null) {
-        // Our data is fetched successfully
+        // Data is fetched successfully
       } else {
         try {
           var songsArray = [];
           db.collection("song")
             .get()
-            .then(snapshot => {
-              snapshot.forEach(doc => {
+            .then((snapshot) => {
+              snapshot.forEach((doc) => {
                 var data = doc.data();
                 songsArray.push({ id: doc.id, data: data });
               });
@@ -95,14 +96,16 @@ export class LoginCheck extends React.Component {
       // Error retrieving data
     }
 
+    //Load custom fonts
     await Font.loadAsync({
       "Rubik-Regular": require("./assets/fonts/Rubik-Regular.ttf"),
-      "Rubik-Medium": require("./assets/fonts/Rubik-Medium.ttf")
+      "Rubik-Medium": require("./assets/fonts/Rubik-Medium.ttf"),
     });
 
     this.setState({ fontLoaded: true });
 
-    firebase.auth().onAuthStateChanged(user => {
+    //If the auth state changes
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.newUserCheck();
       } else {
@@ -114,6 +117,7 @@ export class LoginCheck extends React.Component {
     });
   }
 
+  //Render activity loading or logged in or new user depending on returned value
   renderComponent() {
     if (this.state.loading) {
       return <ActivityIndicator size="large" color="grey" />;

@@ -13,7 +13,7 @@ export default class CustomHeader extends Component {
   _menu = null;
 
   _twoOptionAlertHandler = () => {
-    //function to make two option alert
+    //function to confirm sign out
     Alert.alert(
       //title
       "Are you sure?",
@@ -28,22 +28,25 @@ export default class CustomHeader extends Component {
         },
       ],
       { cancelable: true }
-      //clicking out side of alert will not cancel
+      //clicking out side of alert will cancel
     );
   };
 
+  //Set a reference for the three dots menu
   setMenuRef = (ref) => {
     this._menu = ref;
   };
 
+  //Function to show the three dots menu
   showMenu = () => {
     this._menu.show();
   };
+
+  //Function to hide the menu
   hideMenu = () => {
     this._menu.hide();
     this._twoOptionAlertHandler();
   };
-  signOut() {}
 
   render() {
     return (
@@ -96,12 +99,6 @@ export default class CustomHeader extends Component {
                 Sign Out
               </MenuItem>
             </Menu>
-
-            {/* <MaterialCommunityIcons
-              name="account-circle"
-              color={Constants.colors.primary}
-              size={30}
-            /> */}
           </View>
         }
         centerComponent={{

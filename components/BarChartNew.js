@@ -8,8 +8,10 @@ import { StackActions } from "@react-navigation/native";
 import { NavigationEvents, ThemeColors } from "react-navigation";
 import * as Constants from "../Constants";
 
+//The bar height
 const barHeight = Constants.windowHeight * 0.25;
 
+//The styles for the bar chart
 const styles = StyleSheet.create({
   text: {
     color: "white",
@@ -39,6 +41,7 @@ export default class BarChart extends React.Component {
   constructor(props) {
     super(props);
 
+    //The bar chart values
     this.state = {
       rock: "",
       pop: "",

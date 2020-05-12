@@ -12,10 +12,12 @@ export default class PreferenceSlider extends React.Component {
   }
   state = { value: 0.5, changed: false };
 
+  //Getter function for the slider value
   getValue() {
     return this.state.value;
   }
 
+  //Getter function for slider changed value
   changed() {
     return this.state.changed;
   }

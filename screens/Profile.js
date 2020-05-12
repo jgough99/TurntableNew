@@ -22,20 +22,30 @@ export class Profile extends React.Component {
       hipHop: "",
       electro: "",
       prefsLoading: true,
+      minutesDanced: 0,
+      favArtist: "No Events Attended Yet",
+      timeLoading: true,
     };
   }
-  signOutMethod() {
-    firebase.auth().signOut();
-  }
-
+  //When the component mounts, refresh the screen
   componentDidMount() {
     this.onScreenFocus();
     this.props.navigation.addListener("focus", this.onScreenFocus);
   }
 
+  //When the screen focuses
   onScreenFocus = () => {
+    //Reset stats
+    this.setState({ minutesDanced: 0 });
     this.setState({ prefsLoading: true });
+    this.setState({ timeLoading: true });
+
+    //Count up stats again from database
     const db = firebase.firestore();
+    this.getFavArtist();
+    this.getTimeDanced();
+
+    //Get the users music preferences
     db.collection("user")
       .doc(firebase.auth().currentUser.uid)
       .get()
@@ -51,6 +61,66 @@ export class Profile extends React.Component {
         console.log("Error getting documents", err);
       });
   };
+
+  //Add up all the time danced
+  async getTimeDanced() {
+    const db = firebase.firestore();
+    db.collection("userSong")
+      .where("userId", "==", firebase.auth().currentUser.uid.toString())
+      .get()
+      .then(async (snapshot) => {
+        var i = 0;
+        snapshot.forEach(async (doc) => {
+          this.getSongTime(doc.data().songId);
+          i = i + 1;
+          if (i == 15) {
+            this.setState({ timeLoading: false });
+          }
+        });
+      });
+  }
+
+  //Add up all the song time which the user has listened to
+  getSongTime(song) {
+    const db = firebase.firestore();
+    db.collection("song")
+      .doc(song)
+      .get()
+      .then(async (doc) => {
+        this.setState({
+          minutesDanced: this.state.minutesDanced + doc.data().duration,
+        });
+      });
+  }
+
+  //Get the users most danced to artist
+  async getFavArtist() {
+    const db = firebase.firestore();
+
+    db.collection("userSong")
+      .where("userId", "==", firebase.auth().currentUser.uid.toString())
+      .orderBy("danceScore", "asc")
+      .limit(1)
+      .get()
+      .then(async (snapshot) => {
+        snapshot.forEach(async (doc) => {
+          this.getSongArtist(doc.data().songId);
+        });
+      });
+  }
+
+  //Get the artist from the song
+  async getSongArtist(song) {
+    const db = firebase.firestore();
+    db.collection("song")
+      .doc(song)
+      .get()
+      .then(async (doc) => {
+        this.setState({
+          favArtist: doc.data().artist,
+        });
+      });
+  }
 
   render() {
     return (
@@ -100,7 +170,7 @@ export class Profile extends React.Component {
             <Button
               type="clear"
               title="IMPROVE ACCURACY"
-              onPress={() => this.props.navigation.navigate("MyEventsList")}
+              onPress={() => this.props.navigation.navigate("Preferences")}
               titleStyle={{ color: Constants.colors.secondary, fontSize: 14 }}
             />
           </View>
@@ -147,6 +217,7 @@ export class Profile extends React.Component {
               >
                 Time Partied:
               </Text>
+
               <Text
                 style={{
                   flex: 0.7,
@@ -156,7 +227,7 @@ export class Profile extends React.Component {
                   fontSize: 22,
                 }}
               >
-                2 Hours
+                {Math.round(this.state.minutesDanced)} Minutes
               </Text>
             </View>
             <View
@@ -199,10 +270,10 @@ export class Profile extends React.Component {
                   textAlign: "center",
                   marginTop: 5,
                   fontFamily: "Rubik-Regular",
-                  fontSize: 22,
+                  fontSize: 15,
                 }}
               >
-                Foo Fighters
+                {this.state.favArtist}
               </Text>
             </View>
           </View>

@@ -22,21 +22,23 @@ import { Preferences } from "./screens/Preferences";
 import ConfirmEvent from "./screens/ConfirmEvent";
 import { MyEventsList } from "./screens/MyEventsList";
 import * as Constants from "./Constants";
-BackHandler.addEventListener("hardwareBackPress", function() {
+BackHandler.addEventListener("hardwareBackPress", function () {
   return true;
 });
 
-//////////////// HOME ////////////////////
-
+//Disable warning errors
+console.disableYellowBox = true;
+//Create a tabbed navigator
 const HomeTabs = createBottomTabNavigator();
 
+//Add routes to navigator
 export function BottomNavScreen({ navigation }) {
   const { colors } = useTheme();
   return (
     <HomeTabs.Navigator
       initialRouteName="Profile"
       screenOptions={{
-        headerShown: false
+        headerShown: false,
       }}
       tabBarOptions={{ activeTintColor: colors.primary }}
     >
@@ -47,7 +49,7 @@ export function BottomNavScreen({ navigation }) {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="map" color={color} size={size} />
           ),
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
       <HomeTabs.Screen
@@ -61,7 +63,7 @@ export function BottomNavScreen({ navigation }) {
               size={size}
             />
           ),
-          unmountOnBlur: true
+          unmountOnBlur: true,
         }}
       />
       <HomeTabs.Screen
@@ -74,7 +76,7 @@ export function BottomNavScreen({ navigation }) {
               color={color}
               size={size}
             />
-          )
+          ),
         }}
       />
       <HomeTabs.Screen
@@ -83,15 +85,14 @@ export function BottomNavScreen({ navigation }) {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="history" color={color} size={size} />
-          )
+          ),
         }}
       />
     </HomeTabs.Navigator>
   );
 }
 
-//////////////// ROOT ////////////////////
-
+//Create root stack
 const RootStack = createStackNavigator();
 
 export default function App() {
@@ -100,7 +101,7 @@ export default function App() {
       <RootStack.Navigator
         screenOptions={{
           headerShown: false,
-          gestureEnabled: false
+          gestureEnabled: false,
         }}
         initialRouteName={"LoginCheck"}
       >
